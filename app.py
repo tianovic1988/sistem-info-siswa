@@ -66,7 +66,7 @@ def render_bio(title, icon, data_dict):
     rows = "".join([f"<div class='bio-row'><div class='bio-label'>{k}</div><div class='bio-colon'>:</div><div>{v}</div></div>" for k, v in data_dict.items()])
     st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4>{rows}</div>", unsafe_allow_html=True)
 
-# 6. PDF
+# 6. PDF (Perbaikan Header Tidak Hitam)
 def create_pdf(data, grup_uji):
     pdf = FPDF()
     pdf.set_left_margin(20)
@@ -81,12 +81,20 @@ def create_pdf(data, grup_uji):
         pdf.cell(30, 8, label + ":", 0)
         pdf.cell(0, 8, str(data.get(key, '-')), ln=True)
     pdf.ln(10)
+    
+    # Detail Nilai Akademik
     pdf.set_font("Arial", 'B', 12)
     pdf.cell(0, 10, "Detail Nilai Akademik", ln=True)
     pdf.set_font("Arial", 'B', 11)
+    
+    # Atur warna latar header agar tidak hitam (abu-abu muda)
+    pdf.set_fill_color(220, 220, 220) 
     pdf.cell(50, 10, "Mata Uji", 1, 0, 'C', 1)
-    for i in range(1,4): pdf.cell(30, 10, f"Uji {i}", 1, 0, 'C', 1)
+    for i in range(1,4): 
+        pdf.cell(30, 10, f"Uji {i}", 1, 0, 'C', 1)
+    pdf.set_fill_color(255, 255, 255) # Reset ke putih
     pdf.ln(10)
+    
     pdf.set_font("Arial", '', 11)
     for g, c1, c2, c3 in grup_uji:
         pdf.cell(50, 10, g, 1)
