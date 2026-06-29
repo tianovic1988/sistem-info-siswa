@@ -60,7 +60,7 @@ except Exception as e:
     st.stop()
 
 # 6. Form Input
-no_hp_input = st.text_input("📱 Nomor HP Anda:", placeholder="Contoh: 081234567890")
+no_hp_input = st.text_input("📱 Nomor HP Anda:", placeholder="Contoh: 81234567890")
 
 # Tombol menggunakan type="primary" agar warnanya menyala
 if st.button("Cek Data", use_container_width=True, type="primary"):
