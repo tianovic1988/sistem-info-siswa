@@ -68,7 +68,7 @@ if st.button("Masuk", type="primary", use_container_width=True):
                     else: c2.markdown(f"**{col}**: {val}")
                     i += 1
         
-        # NILAI (Dikelompokkan ke dalam satu kartu dengan kotak terpisah per nilai)
+       # NILAI (Dikelompokkan dengan warna yang lebih menarik)
         st.subheader("📊 Nilai Akademik")
         grup_uji = [
             ("PU", "PU 1", "PU 2"), 
@@ -85,16 +85,16 @@ if st.button("Masuk", type="primary", use_container_width=True):
             val2 = data.get(c2_n, '-')
             
             st.markdown(f"""
-            <div class='val-card' style='padding: 15px; margin-bottom: 15px;'>
-                <div style='font-weight: bold; color: #195CBF; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;'>{g}</div>
-                <div style='display: flex; gap: 10px;'>
-                    <div style='flex: 1; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; background: #fff;'>
-                        <div class='val-title'>{c1_n}</div>
-                        <div class='val-score'>{val1}</div>
+            <div class='val-card' style='padding: 15px; margin-bottom: 15px; border-left: 6px solid #195CBF; background: #ffffff;'>
+                <div style='font-weight: 600; color: #0A2540; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px;'>{g}</div>
+                <div style='display: flex; gap: 12px;'>
+                    <div style='flex: 1; border: 1px solid #eef2f7; border-radius: 8px; padding: 10px; background: #f8fbff;'>
+                        <div style='font-size: 0.75rem; color: #5a6e84; font-weight: 600;'>{c1_n}</div>
+                        <div style='font-size: 1.25rem; font-weight: 700; color: #195CBF;'>{val1}</div>
                     </div>
-                    <div style='flex: 1; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; background: #fff;'>
-                        <div class='val-title'>{c2_n}</div>
-                        <div class='val-score'>{val2}</div>
+                    <div style='flex: 1; border: 1px solid #eef2f7; border-radius: 8px; padding: 10px; background: #f8fbff;'>
+                        <div style='font-size: 0.75rem; color: #5a6e84; font-weight: 600;'>{c2_n}</div>
+                        <div style='font-size: 1.25rem; font-weight: 700; color: #195CBF;'>{val2}</div>
                     </div>
                 </div>
             </div>
