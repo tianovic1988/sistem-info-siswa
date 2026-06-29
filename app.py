@@ -32,15 +32,16 @@ st.markdown("""
 
 # 3. Membuat Sidebar (Panel Samping)
 with st.sidebar:
-    # Anda bisa mengganti URL gambar ini dengan link logo sekolah Anda nanti
     st.image("https://cdn-icons-png.flaticon.com/512/3135/3135823.png", width=100)
     st.title("Pusat Bantuan")
-    st.info("Jika nomor HP Anda tidak terdaftar atau data akademik tidak sesuai, silakan hubungi bagian Tata Usaha Sekolah.")
+    
+    # [PERUBAHAN KALIMAT DI SINI]
+    st.info("Jika nomor tidak terdaftar silakan hubungi : ka Tian ( WA : [wa.me/6287771740512](https://wa.me/6287771740512) )")
+    
     st.divider()
     st.caption("Jam Layanan: 08.00 - 15.00 WIB")
 
 # 4. Header Utama dengan Banner
-# URL di bawah adalah gambar buku/edukasi dari Unsplash
 st.image("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1000&auto=format&fit=crop", use_container_width=True)
 st.title("🎓 Portal Informasi Siswa")
 st.markdown("Silakan masukkan nomor HP terdaftar untuk mengakses data Anda.")
