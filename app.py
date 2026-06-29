@@ -4,25 +4,44 @@ import pandas as pd
 # 1. KONFIGURASI
 st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
 
-# 2. CSS PROFESIONAL (Dark Mode Version)
+# Ganti blok CSS Anda dengan ini (ini akan memperbaiki warna kartu dan teks nilai)
 st.markdown("""
     <style>
-    /* Mengubah latar belakang aplikasi menjadi gelap */
-    .stApp { background-color: #0E1117; }
+    /* Latar belakang aplikasi */
+    .stApp { background-color: #0E1117; color: #FAFAFA; }
     
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-    html, body, [class*="css"] { font-family: 'Poppins', sans-serif; color: #FAFAFA; }
-    #MainMenu, footer, header { visibility: hidden; }
+    /* Kartu Biodata */
+    .bio-card { 
+        background: #1C1E26; 
+        padding: 20px; 
+        border-radius: 12px; 
+        border-left: 8px solid #195CBF; 
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
     
-    .hero-banner { background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%); padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem; }
+    /* Kartu Nilai (Outer Card) */
+    .val-card { 
+        background: #1C1E26; 
+        padding: 15px; 
+        border-radius: 10px; 
+        margin-bottom: 15px; 
+        border-left: 6px solid #195CBF; 
+    }
     
-    /* Kartu Biodata & Nilai (Dark Mode Style) */
-    .val-card { border: 1px solid #262730; padding: 15px; border-radius: 10px; background: #1C1E26; margin-bottom: 15px; border-left: 6px solid #195CBF; }
-    .val-title { font-size: 0.75rem; color: #A0A0A0; font-weight: 600; }
-    .val-score { font-size: 1.25rem; font-weight: 700; color: #FFFFFF; }
+    /* Box Nilai di dalam (Inner Box) */
+    .inner-box { 
+        flex: 1; 
+        border: 1px solid #333; 
+        border-radius: 8px; 
+        padding: 10px; 
+        background: #262730; 
+        text-align: center; 
+    }
     
-    /* Agar teks di dalam container putih tetap terlihat */
-    div[data-testid="stVerticalBlock"] { color: #FAFAFA; }
+    .val-title { font-size: 0.8rem; color: #A0A0A0; font-weight: 600; }
+    .val-score { font-size: 1.4rem; font-weight: 700; color: #FFFFFF; }
+    h4 { color: #FFFFFF !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -97,7 +116,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             "Lokasi": data.get('Lokasi', '-')
         })
 
-        # --- NILAI ---
+        # --- NILAI TERKELOMPOK ---
         st.subheader("📊 Nilai Akademik")
         grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
                     ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
@@ -107,12 +126,12 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             val1, val2 = data.get(c1_n, '-'), data.get(c2_n, '-')
             st.markdown(f"""
             <div class='val-card'>
-                <div style='font-weight: 600; color: #0A2540; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px;'>{g}</div>
+                <div style='font-weight: 600; color: #195CBF; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;'>{g}</div>
                 <div style='display: flex; gap: 12px;'>
-                    <div style='flex: 1; border: 1px solid #eef2f7; border-radius: 8px; padding: 10px; background: #f8fbff; text-align: center;'>
+                    <div class='inner-box'>
                         <div class='val-title'>{c1_n}</div><div class='val-score'>{val1}</div>
                     </div>
-                    <div style='flex: 1; border: 1px solid #eef2f7; border-radius: 8px; padding: 10px; background: #f8fbff; text-align: center;'>
+                    <div class='inner-box'>
                         <div class='val-title'>{c2_n}</div><div class='val-score'>{val2}</div>
                     </div>
                 </div>
