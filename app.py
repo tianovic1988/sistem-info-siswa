@@ -23,31 +23,26 @@ st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sis
 # 4. LOAD DATA
 @st.cache_data
 def load_data():
-    # Membaca excel, memastikan kolom _HP dibaca sebagai teks agar tidak hilang nol depannya
-    return pd.read_excel("data_pengguna.xlsx", dtype={'No_HP': str})
+    return pd.read_excel("data_pengguna.xlsx", dtype={'_HP': str})
 
 try:
     df = load_data()
-    # Membersihkan kolom _HP dari spasi yang mungkin ada
-    df['No_HP'] = df['No_HP'].str.strip()
+    df['_HP'] = df['_HP'].str.strip()
 except Exception as e:
-    st.error(f"File data tidak ditemukan atau bermasalah: {e}")
+    st.error(f"Error memuat file: {e}")
     st.stop()
 
 # 5. INPUT LOGIN
 no_hp = st.text_input("Masukkan Nomor Handphone:")
 
 if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
-    # Mencocokkan input dengan kolom _HP di Excel
-    hasil = df[df['No_HP'] == no_hp.strip()]
+    hasil = df[df['_HP'] == no_hp.strip()]
     
     if not hasil.empty:
         data = hasil.iloc[0]
         
-        # --- BIODATA (3 Kartu Terkelompok) ---
+        # --- BIODATA ---
         st.subheader("👤 Biodata Siswa")
-        
-        # Kartu Data Siswa
         with st.container(border=True):
             st.markdown("#### 🧑‍🎓 Data Siswa")
             c1, c2 = st.columns(2)
@@ -55,7 +50,6 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             c2.write(f"**No Reg**: {data.get('NO REGISTRASI', '-')}")
             st.write(f"**No HP Siswa**: {data.get('NO HP SISWA', '-')}")
             
-        # Kartu Data Ortu
         with st.container(border=True):
             st.markdown("#### 👨‍👩‍👧 Data Orang Tua")
             st.write(f"**Nama Ortu**: {data.get('NAMA ORTU', '-')}")
@@ -63,7 +57,6 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             c1.write(f"**No HP 1**: {data.get('NO HP ORTU 1', '-')}")
             c2.write(f"**No HP 2**: {data.get('NO HP ORTU 2', '-')}")
             
-        # Kartu Data Kelas GO
         with st.container(border=True):
             st.markdown("#### 📚 Data Kelas GO")
             st.write(f"**Kelas**: {data.get('KELAS GO', '-')}")
@@ -73,14 +66,15 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             c1.write(f"**Ruang**: {data.get('Ruang Kelas', '-')}")
             c2.write(f"**Lokasi**: {data.get('Lokasi', '-')}")
 
-        # --- NILAI TERKELOMPOK ---
+        # --- NILAI ---
         st.subheader("📊 Nilai Akademik")
         grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
                     ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
                     ("Lit Bhs Ing","Lit Bhs Ing 1","Lit Bhs Ing 2"), ("PM","PM 1","PM 2")]
         
         for g, c1_n, c2_n in grup_uji:
-            val1, val2 = data.get(c1_n, '-'), data.get(c2_n, '-')
+            val1 = data.get(c1_n, '-')
+            val2 = data.get(c2_n, '-')
             st.markdown(f"""
             <div class='val-card'>
                 <div style='font-weight: 600; color: #0A2540; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px;'>{g}</div>
