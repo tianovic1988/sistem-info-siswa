@@ -1,24 +1,15 @@
 import streamlit as st
 import pandas as pd
 
-# 1. KONFIGURASI PALING ATAS
+# 1. KONFIGURASI
 st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
 
-# 2. SIDEBAR (Dipaksa muncul di awal)
-with st.sidebar:
-    st.markdown("### 🏫 Pusat Layanan")
-    st.info("Jika data tidak sesuai, hubungi tim kami:")
-    st.success("👨‍💻 **Ka Tian**\n📱 [Chat WhatsApp](https://wa.me/6287771740512)")
-    st.divider()
-    st.caption("🕒 Jam Operasional:\nSenin - Jumat (08.00 - 15.00 WIB)")
-
-# 3. CSS PROFESIONAL
+# 2. CSS PROFESIONAL
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
     html, body, [class*="css"] { font-family: 'Poppins', sans-serif; }
     #MainMenu, footer, header { visibility: hidden; }
-    
     .hero-banner { background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%); padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem; }
     .val-card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; background: #ffffff; margin-bottom: 15px; border-left: 6px solid #195CBF; }
     .val-title { font-size: 0.75rem; color: #5a6e84; font-weight: 600; }
@@ -26,10 +17,10 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 4. HEADER
+# 3. HEADER
 st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sistem Informasi Siswa Terpadu</p></div>""", unsafe_allow_html=True)
 
-# 5. DATA
+# 4. DATA
 @st.cache_data
 def load_data():
     return pd.read_excel("data_pengguna.xlsx", dtype={'No_HP': str})
@@ -38,10 +29,10 @@ try:
     df = load_data()
     df['No_HP'] = df['No_HP'].str.strip()
 except:
-    st.error("File 'data_pengguna.xlsx' tidak ditemukan.")
+    st.error("File data tidak ditemukan.")
     st.stop()
 
-# 6. INPUT & LOGIKA
+# 5. INPUT & LOGIKA
 no_hp = st.text_input("Masukkan Nomor Handphone Terdaftar:")
 
 if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
@@ -96,4 +87,5 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             </div>
             """, unsafe_allow_html=True)
     else:
-        st.error("Nomor handphone tidak terdaftar di sistem.")
+        # Peringatan kustom yang Anda minta
+        st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
