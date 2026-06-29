@@ -10,9 +10,16 @@ st.markdown("""
     .stApp { background-color: #0E1117; color: #FAFAFA; }
     #MainMenu, footer, header { visibility: hidden; }
     .hero-banner { background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%); padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem; }
+    
     .bio-card { background: #3498db; color: #ffffff; padding: 20px; border-radius: 12px; border-left: 8px solid #2980b9; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
     .bio-card h4, .bio-card strong { color: #ffffff !important; }
     .bio-card div { color: #f0f0f0 !important; }
+    
+    /* CSS baru untuk menyejajarkan titik dua */
+    .bio-row { display: flex; margin-bottom: 8px; }
+    .bio-label { width: 120px; font-weight: bold; flex-shrink: 0; }
+    .bio-colon { width: 20px; }
+    
     .val-card { background: #1C1E26; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 6px solid #195CBF; }
     .inner-box { flex: 1; border: 1px solid #333; border-radius: 8px; padding: 10px; background: #262730; text-align: center; }
     .val-title { font-size: 0.7rem; color: #A0A0A0; font-weight: 600; }
@@ -27,7 +34,6 @@ st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sis
 @st.cache_data
 def load_data():
     df = pd.read_excel("data_pengguna.xlsx")
-    # Bersihkan nama kolom dari spasi tambahan agar tidak error saat dicari
     df.columns = df.columns.str.strip()
     df.rename(columns={df.columns[0]: 'No_HP'}, inplace=True)
     df['No_HP'] = df['No_HP'].astype(str).str.strip()
@@ -48,11 +54,17 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
     if not hasil.empty:
         data = hasil.iloc[0]
         
+        # FUNGSI RENDER BIODATA (REVISI TITIK DUA)
         def render_biodata_card(title, icon, content_dict):
-            cols_html = ""
+            rows_html = ""
             for key, val in content_dict.items():
-                cols_html += f"<div style='margin-bottom: 8px;'><strong>{key}:</strong> {val}</div>"
-            st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4><div>{cols_html}</div></div>", unsafe_allow_html=True)
+                rows_html += f"""
+                <div class='bio-row'>
+                    <div class='bio-label'>{key}</div>
+                    <div class='bio-colon'>:</div>
+                    <div>{val}</div>
+                </div>"""
+            st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4>{rows_html}</div>", unsafe_allow_html=True)
 
         st.subheader("👤 Biodata Siswa")
         render_biodata_card("Data Siswa", "🧑‍🎓", {"Nama": data.get('NAMA LENGKAP', '-'), "No Reg": data.get('NO REGISTRASI', '-'), "No HP Siswa": data.get('NO HP SISWA', '-')})
@@ -71,7 +83,6 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
         ]
 
         for g, c1, c2, c3 in grup_uji:
-            # Menggunakan .get untuk mencari kolom, memastikan output string dan menangani NaN
             v1 = data[c1] if c1 in data and pd.notnull(data[c1]) else '-'
             v2 = data[c2] if c2 in data and pd.notnull(data[c2]) else '-'
             v3 = data[c3] if c3 in data and pd.notnull(data[c3]) else '-'
@@ -88,4 +99,4 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             """, unsafe_allow_html=True)
             
     else:
-        st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
+        st.error("Nomor handphone tidak terdaftar di sistem.")
