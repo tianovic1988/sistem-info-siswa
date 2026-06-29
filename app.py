@@ -35,7 +35,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # 3. HEADER
-st.markdown("""<div class="hero-banner"><h1>BISA SYSTEM</h1><p>Basis Informasi Siswa dan Akademik - by tian.go</p></div>""", unsafe_allow_html=True)
+st.markdown("""<div class="hero-banner"><h1>BISA - Basis Informasi Siswa dan Akademik</h1><p>by : tian.go</p></div>""", unsafe_allow_html=True)
 
 # 4. LOAD DATA
 @st.cache_data
@@ -54,12 +54,12 @@ grup_uji = [
     ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), ("PM", "PM 1", "PM 2", "PM 3")
 ]
 
-# 5. FUNGSI RENDER BIODATA (Dengan titik dua sejajar)
+# 5. FUNGSI RENDER BIODATA
 def render_bio(title, icon, data_dict):
     rows = "".join([f"<div class='bio-row'><div class='bio-label'>{k}</div><div class='bio-colon'>:</div><div>{v}</div></div>" for k, v in data_dict.items()])
     st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4>{rows}</div>", unsafe_allow_html=True)
 
-# 6. PDF (TETAP)
+# 6. PDF
 def create_pdf(data, grup_uji):
     pdf = FPDF()
     pdf.set_left_margin(20)
@@ -101,13 +101,11 @@ if st.button("Masuk ke Sistem"):
         data = hasil.iloc[0]
         st.link_button("Chat Admin", "https://wa.me/6287771740512")
         
-        # BIODATA RAPI
         st.subheader("👤 Biodata Lengkap")
         render_bio("Siswa", "🧑‍🎓", {"Nama": data['NAMA LENGKAP'], "Reg": data['NO REGISTRASI'], "HP": data['NO HP SISWA']})
         render_bio("Orang Tua", "👨‍👩‍👧", {"Nama": data['NAMA ORTU'], "HP 1": data['NO HP ORTU 1'], "HP 2": data['NO HP ORTU 2']})
         render_bio("Kelas GO", "📚", {"Kelas": data['KELAS GO'], "Hari": data['HARI'], "Jam": data['JAM KBM'], "Ruang": data['Ruang Kelas'], "Lokasi": data['Lokasi']})
         
-        # TREN & NILAI
         st.subheader("📈 Tren Nilai")
         fig = go.Figure()
         for g, c1, c2, c3 in grup_uji:
