@@ -1,38 +1,35 @@
 import streamlit as st
 import pandas as pd
 
-# 1. Konfigurasi Halaman
+# 1. KONFIGURASI PALING ATAS
 st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
 
-# 2. Desain CSS (Modern, Profesional, & Responsif)
+# 2. SIDEBAR (Dipaksa muncul di awal)
+with st.sidebar:
+    st.markdown("### 🏫 Pusat Layanan")
+    st.info("Jika data tidak sesuai, hubungi tim kami:")
+    st.success("👨‍💻 **Ka Tian**\n📱 [Chat WhatsApp](https://wa.me/6287771740512)")
+    st.divider()
+    st.caption("🕒 Jam Operasional:\nSenin - Jumat (08.00 - 15.00 WIB)")
+
+# 3. CSS PROFESIONAL
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
     html, body, [class*="css"] { font-family: 'Poppins', sans-serif; }
-    #MainMenu, footer, header, .stAppDeployButton { visibility: hidden; }
+    #MainMenu, footer, header { visibility: hidden; }
     
-    .hero-banner {
-        background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%);
-        padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem;
-    }
+    .hero-banner { background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%); padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem; }
     .val-card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; background: #ffffff; margin-bottom: 15px; border-left: 6px solid #195CBF; }
     .val-title { font-size: 0.75rem; color: #5a6e84; font-weight: 600; }
     .val-score { font-size: 1.25rem; font-weight: 700; color: #195CBF; }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Sidebar (Pusat Layanan)
-with st.sidebar:
-    st.markdown("### 🏫 Pusat Layanan")
-    st.info("Jika data tidak sesuai, silakan hubungi tim kami:")
-    st.success("👨‍💻 **Ka Tian**\n📱 [Chat WhatsApp](https://wa.me/6287771740512)")
-    st.divider()
-    st.caption("🕒 Jam Operasional: Senin - Jumat (08.00 - 15.00 WIB)")
-
-# 4. Header
+# 4. HEADER
 st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sistem Informasi Siswa Terpadu</p></div>""", unsafe_allow_html=True)
 
-# 5. Load Data
+# 5. DATA
 @st.cache_data
 def load_data():
     return pd.read_excel("data_pengguna.xlsx", dtype={'No_HP': str})
@@ -41,19 +38,19 @@ try:
     df = load_data()
     df['No_HP'] = df['No_HP'].str.strip()
 except:
-    st.error("File 'data_pengguna.xlsx' tidak ditemukan. Pastikan file sudah diunggah.")
+    st.error("File 'data_pengguna.xlsx' tidak ditemukan.")
     st.stop()
 
-# 6. Login & Tampilan Data
+# 6. INPUT & LOGIKA
 no_hp = st.text_input("Masukkan Nomor Handphone Terdaftar:")
+
 if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
     hasil = df[df['No_HP'] == no_hp.strip()]
     if not hasil.empty:
         data = hasil.iloc[0]
         
-        # --- BIODATA TERKELOMPOK ---
+        # BIODATA
         st.subheader("👤 Biodata Siswa")
-        
         with st.container(border=True):
             st.markdown("#### 🧑‍🎓 Data Siswa")
             c1, c2 = st.columns(2)
@@ -77,7 +74,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             c2.write(f"**Ruang**: {data.get('RUANG KELAS', '-')}")
             st.write(f"**Lokasi**: {data.get('LOKASI', '-')}")
 
-        # --- NILAI TERKELOMPOK ---
+        # NILAI
         st.subheader("📊 Nilai Akademik")
         grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
                     ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
