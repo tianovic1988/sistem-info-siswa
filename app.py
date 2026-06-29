@@ -99,7 +99,7 @@ if st.button("Masuk ke Sistem"):
     hasil = df[df['No_HP'] == no_hp.strip()]
     if not hasil.empty and password.strip() == str(hasil.iloc[0].get('PASSWORD', '')).strip():
         data = hasil.iloc[0]
-        st.link_button("Chat Admin", "https://wa.me/6287771740512")
+        st.link_button("Chat *Personal Trainer*", "https://wa.me/6287771740512")
         
         st.subheader("👤 Biodata Lengkap")
         render_bio("Siswa", "🧑‍🎓", {"Nama": data['NAMA LENGKAP'], "Reg": data['NO REGISTRASI'], "HP": data['NO HP SISWA']})
@@ -122,4 +122,4 @@ if st.button("Masuk ke Sistem"):
         st.download_button("Download Laporan PDF", data=create_pdf(data, grup_uji), file_name="Laporan_Akademik.pdf", mime="application/pdf")
     else:
         st.error("Data tidak ditemukan atau Password salah.")
-        st.link_button("Hubungi Admin (ka Tian) untuk Bantuan", "https://wa.me/6287771740512")
+        st.link_button("Hubungi *Personal Trainer* (ka Tian) untuk Bantuan", "https://wa.me/6287771740512")
