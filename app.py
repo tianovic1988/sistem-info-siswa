@@ -31,6 +31,7 @@ st.markdown("""
     .inner-box { flex: 1; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; background: rgba(0,0,0,0.2); text-align: center; }
     .val-title { font-size: 0.65rem; color: #A0A0A0; text-transform: uppercase; letter-spacing: 1px; }
     .val-score { font-size: 1.3rem; font-weight: 800; color: #FFFFFF; }
+    .trainer-box { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px; text-align: center; margin-top: 20px; border: 1px solid #3b82f6; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -54,7 +55,7 @@ grup_uji = [
     ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), ("PM", "PM 1", "PM 2", "PM 3")
 ]
 
-# 5. FUNGSI RENDER BIODATA
+# 5. FUNGSI RENDER
 def render_bio(title, icon, data_dict):
     rows = "".join([f"<div class='bio-row'><div class='bio-label'>{k}</div><div class='bio-colon'>:</div><div>{v}</div></div>" for k, v in data_dict.items()])
     st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4>{rows}</div>", unsafe_allow_html=True)
@@ -106,6 +107,9 @@ if st.button("Masuk ke Sistem"):
         render_bio("Orang Tua", "👨‍👩‍👧", {"Nama": data['NAMA ORTU'], "HP 1": data['NO HP ORTU 1'], "HP 2": data['NO HP ORTU 2']})
         render_bio("Kelas GO", "📚", {"Kelas": data['KELAS GO'], "Hari": data['HARI'], "Jam": data['JAM KBM'], "Ruang": data['Ruang Kelas'], "Lokasi": data['Lokasi']})
         
+        with st.expander("ℹ️ FAQ: Cara Membaca Hasil Akademik"):
+            st.write("1. **Uji 1, 2, 3**: Menampilkan skor dari setiap sesi ujian yang telah diikuti.\n2. **Grafik Tren**: Memudahkan Anda melihat perkembangan performa secara visual.\n3. **Kendala**: Jika ada nilai yang tidak sesuai atau butuh jadwal tambahan, segera hubungi *Personal Trainer* Anda.")
+
         st.subheader("📈 Tren Nilai")
         fig = go.Figure()
         for g, c1, c2, c3 in grup_uji:
@@ -120,6 +124,8 @@ if st.button("Masuk ke Sistem"):
             <div class='inner-box'><div class='val-title'>Uji 3</div><div class='val-score'>{data.get(c3,'-')}</div></div></div></div>""", unsafe_allow_html=True)
         
         st.download_button("Download Laporan PDF", data=create_pdf(data, grup_uji), file_name="Laporan_Akademik.pdf", mime="application/pdf")
+        
+        st.markdown("<div class='trainer-box'><h5>👨‍🏫 Profil Personal Trainer</h5><p><strong>ka Tian</strong><br>Siap mendampingi dan memberikan arahan strategis agar Anda mencapai target akademik terbaik!</p></div>", unsafe_allow_html=True)
     else:
         st.error("Data tidak ditemukan atau Password salah.")
         st.link_button("Hubungi *Personal Trainer* (ka Tian) untuk Bantuan", "https://wa.me/6287771740512")
