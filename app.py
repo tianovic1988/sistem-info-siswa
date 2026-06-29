@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from fpdf import FPDF
-from datetime import datetime # Menambahkan modul datetime untuk waktu real-time
+from datetime import datetime
+import pytz # Memastikan waktu menggunakan zona WIB
 
 # 1. KONFIGURASI
 st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
@@ -52,9 +53,10 @@ grup_uji = [
     ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), ("PM", "PM 1", "PM 2", "PM 3")
 ]
 
-# 6. FUNGSI PDF (DENGAN FOOTER REAL-TIME)
+# 6. FUNGSI PDF (REVISI MARGIN & WAKTU WIB)
 def create_pdf(data, grup_uji):
     pdf = FPDF()
+    pdf.set_left_margin(20) # Margin kiri ditingkatkan agar tidak mepet
     pdf.add_page()
     pdf.set_font("Arial", 'B', 16)
     pdf.cell(0, 10, "Laporan Hasil Akademik", ln=True, align='C')
@@ -77,11 +79,13 @@ def create_pdf(data, grup_uji):
     pdf.set_fill_color(200, 220, 255)
     pdf.set_font("Arial", 'B', 11)
     
+    # Header Tabel
     pdf.cell(50, 10, "Mata Uji", 1, 0, 'C', 1)
     pdf.cell(30, 10, "Uji 1", 1, 0, 'C', 1)
     pdf.cell(30, 10, "Uji 2", 1, 0, 'C', 1)
     pdf.cell(30, 10, "Uji 3", 1, 1, 'C', 1)
     
+    # Isi Tabel
     pdf.set_font("Arial", '', 11)
     for g, c1, c2, c3 in grup_uji:
         pdf.cell(50, 10, g, 1)
@@ -89,11 +93,12 @@ def create_pdf(data, grup_uji):
         pdf.cell(30, 10, str(data.get(c2, '-')), 1, 0, 'C')
         pdf.cell(30, 10, str(data.get(c3, '-')), 1, 1, 'C')
     
-    # Footer Real-time
+    # Footer Waktu WIB
     pdf.ln(10)
     pdf.set_font("Arial", 'I', 9)
-    waktu_cetak = datetime.now().strftime("%d %B %Y, %H:%M:%S")
-    pdf.cell(0, 10, f"Dicetak dari BISA SYSTEM - by tian.go pada {waktu_cetak}", ln=True, align='C')
+    wib = pytz.timezone('Asia/Jakarta')
+    waktu_wib = datetime.now(wib).strftime("%d %B %Y, %H:%M:%S")
+    pdf.cell(0, 10, f"Dicetak dari BISA SYSTEM - by tian.go pada {waktu_wib}", ln=True, align='C')
         
     return pdf.output(dest='S').encode('latin-1')
 
@@ -110,7 +115,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
         if password.strip() == db_password:
             st.link_button("Chat Admin (ka Tian) untuk Bantuan", "https://wa.me/6287771740512")
             
-            # Biodata Lengkap
+            # Biodata
             def render_biodata_card(title, icon, content_dict):
                 rows_html = "".join([f"<div class='bio-row'><div class='bio-label'>{k}</div><div class='bio-colon'>:</div><div>{v}</div></div>" for k, v in content_dict.items()])
                 st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4>{rows_html}</div>", unsafe_allow_html=True)
@@ -127,7 +132,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
                 fig.add_trace(go.Scatter(x=['Uji 1', 'Uji 2', 'Uji 3'], y=scores, name=g))
             st.plotly_chart(fig, use_container_width=True)
             
-            # Nilai Lengkap
+            # Nilai
             st.subheader("📊 Nilai Akademik")
             for g, c1, c2, c3 in grup_uji:
                 v1, v2, v3 = data.get(c1, '-'), data.get(c2, '-'), data.get(c3, '-')
