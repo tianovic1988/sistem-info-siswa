@@ -45,30 +45,51 @@ except Exception as e:
 
 # 5. DATA GLOBAL
 grup_uji = [
-    ("PU", "PU 1", "PU 2", "PU 3"), 
-    ("PPU", "PPU 1", "PPU 2", "PPU 3"), 
-    ("PBM", "PBM 1", "PBM 2", "PBM 3"), 
-    ("PK", "PK 1", "PK 2", "PK 3"), 
+    ("PU", "PU 1", "PU 2", "PU 3"), ("PPU", "PPU 1", "PPU 2", "PPU 3"), 
+    ("PBM", "PBM 1", "PBM 2", "PBM 3"), ("PK", "PK 1", "PK 2", "PK 3"), 
     ("Lit Bhs Indo", "Lit Bhs Indo 1", "Lit Bhs Indo 2", "Lit Bhs Indo 3"), 
-    ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), 
-    ("PM", "PM 1", "PM 2", "PM 3")
+    ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), ("PM", "PM 1", "PM 2", "PM 3")
 ]
 
-# 6. FUNGSI PDF
+# 6. FUNGSI PDF (REVISI TABEL RAPI)
 def create_pdf(data, grup_uji):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", 'B', 16)
     pdf.cell(0, 10, "Laporan Hasil Akademik", ln=True, align='C')
-    pdf.ln(5)
-    pdf.set_font("Arial", size=12)
-    # Biodata lengkap di PDF
+    pdf.ln(10)
+    
+    # Biodata
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 10, "Biodata Siswa", ln=True)
+    pdf.set_font("Arial", '', 11)
     fields = [("Nama", 'NAMA LENGKAP'), ("Reg", 'NO REGISTRASI'), ("Kelas", 'KELAS GO'), ("Ortu", 'NAMA ORTU')]
     for label, key in fields:
-        pdf.cell(0, 8, f"{label}: {data.get(key, '-')}", ln=True)
-    pdf.ln(5)
+        pdf.cell(30, 8, label + ":", 0)
+        pdf.cell(0, 8, str(data.get(key, '-')), ln=True)
+    
+    pdf.ln(10)
+    
+    # Tabel Nilai
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 10, "Detail Nilai Akademik", ln=True)
+    pdf.set_fill_color(200, 220, 255)
+    pdf.set_font("Arial", 'B', 11)
+    
+    # Header Tabel
+    pdf.cell(50, 10, "Mata Uji", 1, 0, 'C', 1)
+    pdf.cell(30, 10, "Uji 1", 1, 0, 'C', 1)
+    pdf.cell(30, 10, "Uji 2", 1, 0, 'C', 1)
+    pdf.cell(30, 10, "Uji 3", 1, 1, 'C', 1)
+    
+    # Isi Tabel
+    pdf.set_font("Arial", '', 11)
     for g, c1, c2, c3 in grup_uji:
-        pdf.cell(0, 8, f"{g}: {data.get(c1, '-')} | {data.get(c2, '-')} | {data.get(c3, '-')}", ln=True)
+        pdf.cell(50, 10, g, 1)
+        pdf.cell(30, 10, str(data.get(c1, '-')), 1, 0, 'C')
+        pdf.cell(30, 10, str(data.get(c2, '-')), 1, 0, 'C')
+        pdf.cell(30, 10, str(data.get(c3, '-')), 1, 1, 'C')
+        
     return pdf.output(dest='S').encode('latin-1')
 
 # 7. INPUT LOGIN
@@ -111,7 +132,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
                 <div class='inner-box'><div class='val-title'>{c3}</div><div class='val-score'>{v3}</div></div></div></div>""", unsafe_allow_html=True)
             
             # PDF
-            st.download_button("Download Laporan (PDF)", data=create_pdf(data, grup_uji), file_name="laporan.pdf", mime="application/pdf")
+            st.download_button("Download Laporan (PDF)", data=create_pdf(data, grup_uji), file_name="Laporan_Akademik.pdf", mime="application/pdf")
         else:
             st.error("Password salah. Silakan hubungi admin (ka Tian) di WA : 087771740512")
     else:
