@@ -27,7 +27,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # 3. HEADER
-st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sistem Informasi Siswa Terpadu</p></div>""", unsafe_allow_html=True)
+st.markdown("""<div class="hero-banner"><h1>BISA - Basis Informasi Siswa dan Akademik</h1><p>created by tian.go</p></div>""", unsafe_allow_html=True)
 
 # 4. LOAD DATA (DIPERBAIKI: Memaksa semua data menjadi string agar format tetap terjaga)
 @st.cache_data
