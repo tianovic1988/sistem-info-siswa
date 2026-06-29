@@ -45,30 +45,48 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
     if not hasil.empty:
         data = hasil.iloc[0]
         
-        # --- BIODATA ---
+        # --- BIODATA (Terkelompok & Eye-Catching) ---
         st.subheader("👤 Biodata Siswa")
-        with st.container(border=True):
-            st.markdown("#### 🧑‍🎓 Data Siswa")
-            c1, c2 = st.columns(2)
-            c1.write(f"**Nama**: {data.get('NAMA LENGKAP', '-')}")
-            c2.write(f"**No Reg**: {data.get('NO REGISTRASI', '-')}")
-            st.write(f"**No HP Siswa**: {data.get('NO HP SISWA', '-')}")
+        
+        # Fungsi pembantu untuk membuat kartu biodata agar kode lebih rapi
+        def render_biodata_card(title, icon, content_dict):
+            # Menggunakan HTML/CSS untuk tampilan yang lebih elegan
+            cols_html = ""
+            for key, val in content_dict.items():
+                cols_html += f"<div style='margin-bottom: 8px;'><strong>{key}:</strong> {val}</div>"
             
-        with st.container(border=True):
-            st.markdown("#### 👨‍👩‍👧 Data Orang Tua")
-            st.write(f"**Nama Ortu**: {data.get('NAMA ORTU', '-')}")
-            c1, c2 = st.columns(2)
-            c1.write(f"**No HP 1**: {data.get('NO HP ORTU 1', '-')}")
-            c2.write(f"**No HP 2**: {data.get('NO HP ORTU 2', '-')}")
+            st.markdown(f"""
+            <div style='background: #ffffff; padding: 20px; border-radius: 12px; border-left: 8px solid #195CBF; 
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px;'>
+                <h4 style='color: #0A2540; margin-top: 0;'>{icon} {title}</h4>
+                <div style='color: #34495e; font-size: 0.95rem;'>
+                    {cols_html}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # 1. Data Siswa
+        render_biodata_card("Data Siswa", "🧑‍🎓", {
+            "Nama": data.get('NAMA LENGKAP', '-'),
+            "No Reg": data.get('NO REGISTRASI', '-'),
+            "No HP Siswa": data.get('NO HP SISWA', '-')
+        })
             
-        with st.container(border=True):
-            st.markdown("#### 📚 Data Kelas GO")
-            st.write(f"**Kelas**: {data.get('KELAS GO', '-')}")
-            st.write(f"**Hari**: {data.get('HARI', '-')}")
-            st.write(f"**Jam**: {data.get('JAM KBM', '-')}")
-            c1, c2 = st.columns(2)
-            c1.write(f"**Ruang**: {data.get('Ruang Kelas', '-')}")
-            c2.write(f"**Lokasi**: {data.get('Lokasi', '-')}")
+        # 2. Data Orang Tua
+        render_biodata_card("Data Orang Tua", "👨‍👩‍👧", {
+            "Nama Ortu": data.get('NAMA ORTU', '-'),
+            "No HP 1": data.get('NO HP ORTU 1', '-'),
+            "No HP 2": data.get('NO HP ORTU 2', '-')
+        })
+            
+        # 3. Data Kelas GO
+        render_biodata_card("Data Kelas GO", "📚", {
+            "Kelas": data.get('KELAS GO', '-'),
+            "Hari": data.get('HARI', '-'),
+            "Jam": data.get('JAM KBM', '-'),
+            "Ruang": data.get('Ruang Kelas', '-'),
+            "Lokasi": data.get('Lokasi', '-')
+        })
 
         # --- NILAI ---
         st.subheader("📊 Nilai Akademik")
