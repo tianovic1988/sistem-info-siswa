@@ -25,7 +25,6 @@ st.markdown("""
     .bio-colon { width: 20px; }
     
     .val-card { background: rgba(30, 30, 45, 0.8); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #195CBF; transition: transform 0.3s; }
-    .val-card:hover { transform: translateY(-5px); }
     div.stButton > button { border-radius: 20px !important; background: linear-gradient(90deg, #195CBF, #3b82f6) !important; color: white !important; border: none !important; padding: 0.5rem 2rem !important; width: 100%; }
     .inner-box { flex: 1; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; background: rgba(0,0,0,0.2); text-align: center; }
     .val-title { font-size: 0.65rem; color: #A0A0A0; text-transform: uppercase; letter-spacing: 1px; }
@@ -33,14 +32,8 @@ st.markdown("""
     .trainer-box { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid #3b82f6; margin-bottom: 20px; }
     .quote-text { font-style: italic; color: #3b82f6; margin: 15px 0; font-size: 1.1rem; }
     
-    /* Styling khusus Tab agar lebih terlihat di background gelap */
     .stTabs [data-baseweb="tab-list"] { gap: 10px; }
-    .stTabs [data-baseweb="tab"] {
-        background-color: rgba(255,255,255,0.05);
-        border-radius: 10px 10px 0px 0px;
-        padding: 10px 20px;
-        color: white;
-    }
+    .stTabs [data-baseweb="tab"] { background-color: rgba(255,255,255,0.05); border-radius: 10px 10px 0px 0px; padding: 10px 20px; color: white; }
     .stTabs [aria-selected="true"] { background-color: #195CBF !important; }
     </style>
     """, unsafe_allow_html=True)
@@ -57,7 +50,6 @@ def load_data():
         df.rename(columns={df.columns[0]: 'No_HP'}, inplace=True)
         return df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
     except:
-        # Jika file tidak ada, buat dataframe kosong agar tidak crash
         return pd.DataFrame(columns=['No_HP', 'PASSWORD'])
 
 df = load_data()
@@ -72,7 +64,7 @@ grup_uji = [
 # 5. FUNGSI RENDER
 def render_bio(title, icon, data_dict):
     rows = "".join([f"<div class='bio-row'><div class='bio-label'>{k}</div><div class='bio-colon'>:</div><div>{v}</div></div>" for k, v in data_dict.items()])
-    st.markdown(f<div class='bio-card'><h4>{icon} {title}</h4>{rows}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4>{rows}</div>", unsafe_allow_html=True)
 
 # 6. PDF
 def create_pdf(data, grup_uji):
@@ -115,7 +107,6 @@ if st.button("Masuk ke Sistem"):
     if not hasil.empty and password.strip() == str(hasil.iloc[0].get('PASSWORD', '')).strip():
         data = hasil.iloc[0]
         
-        # --- SISTEM TAB HORIZONTAL ---
         tab1, tab2, tab3, tab4 = st.tabs(["👤 Biodata", "📊 Akademik", "👨‍🏫 Personal Trainer", "📥 Download"])
 
         with tab1:
@@ -129,13 +120,11 @@ if st.button("Masuk ke Sistem"):
 
         with tab2:
             st.subheader("Tren & Nilai Akademik")
-            # Grafik Tren
             fig = go.Figure()
             for g, c1, c2, c3 in grup_uji:
                 fig.add_trace(go.Scatter(x=['Uji 1', 'Uji 2', 'Uji 3'], y=[pd.to_numeric(data.get(c,0), errors='coerce') for c in [c1,c2,c3]], name=g))
             st.plotly_chart(fig, use_container_width=True)
             
-            # Kartu Nilai Angka
             st.markdown("---")
             for g, c1, c2, c3 in grup_uji:
                 st.markdown(f"""<div class='val-card'><div style='font-weight:bold; margin-bottom:5px;'>{g}</div>
