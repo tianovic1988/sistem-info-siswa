@@ -68,7 +68,7 @@ if st.button("Masuk", type="primary", use_container_width=True):
                     else: c2.markdown(f"**{col}**: {val}")
                     i += 1
         
-        # NILAI
+        # NILAI (Dikelompokkan per mata uji)
         st.subheader("📊 Nilai Akademik")
         grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
                     ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
