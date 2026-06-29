@@ -59,7 +59,7 @@ def render_bio(title, icon, data_dict):
     rows = "".join([f"<div class='bio-row'><div class='bio-label'>{k}</div><div class='bio-colon'>:</div><div>{v}</div></div>" for k, v in data_dict.items()])
     st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4>{rows}</div>", unsafe_allow_html=True)
 
-# 6. PDF GENERATOR (DENGAN TITIK DUA SEJAJAR)
+# 6. PDF GENERATOR
 def create_pdf(data, grup_uji):
     pdf = FPDF()
     pdf.set_left_margin(20)
@@ -67,47 +67,35 @@ def create_pdf(data, grup_uji):
     pdf.set_font("Arial", 'B', 16)
     pdf.cell(0, 10, "Laporan Hasil Akademik", ln=True, align='C')
     pdf.ln(10)
-    
-    # Biodata Sejajar
     pdf.set_font("Arial", 'B', 12)
     pdf.cell(0, 10, "Biodata Siswa", ln=True)
     pdf.set_font("Arial", '', 11)
-    biodata_list = [
-        ("Nama", str(data.get('NAMA LENGKAP', '-'))),
-        ("Reg", str(data.get('NO REGISTRASI', '-'))),
-        ("Kelas", str(data.get('KELAS GO', '-'))),
-        ("Ortu", str(data.get('NAMA ORTU', '-')))
-    ]
+    biodata_list = [("Nama", data.get('NAMA LENGKAP', '-')), ("Reg", data.get('NO REGISTRASI', '-')), 
+                    ("Kelas", data.get('KELAS GO', '-')), ("Ortu", data.get('NAMA ORTU', '-'))]
     for label, value in biodata_list:
         pdf.cell(20, 8, label, 0)
         pdf.cell(5, 8, ":", 0, 0, 'C')
-        pdf.cell(0, 8, value, ln=True)
+        pdf.cell(0, 8, str(value), ln=True)
     pdf.ln(10)
-    
-    # Tabel Nilai
     pdf.set_font("Arial", 'B', 12)
     pdf.cell(0, 10, "Detail Nilai Akademik", ln=True)
     pdf.set_font("Arial", 'B', 11)
-    
     pdf.set_fill_color(220, 220, 220) 
     pdf.cell(50, 10, "Mata Uji", 1, 0, 'C', 1)
     for i in range(1,4): pdf.cell(30, 10, f"Uji {i}", 1, 0, 'C', 1)
     pdf.set_fill_color(255, 255, 255)
     pdf.ln(10)
-    
     pdf.set_font("Arial", '', 11)
     for g, c1, c2, c3 in grup_uji:
         pdf.cell(50, 10, g, 1)
         for c in [c1, c2, c3]: pdf.cell(30, 10, str(data.get(c, '-')), 1, 0, 'C')
         pdf.ln(10)
-    
     pdf.ln(10)
-    pdf.set_font("Arial", 'I', 9)
     waktu = datetime.now(pytz.timezone('Asia/Jakarta')).strftime("%d %B %Y, %H:%M:%S")
     pdf.cell(0, 10, f"Dicetak dari BISA SYSTEM - by tian.go pada {waktu}", ln=True, align='C')
     return pdf.output(dest='S').encode('latin-1')
 
-# 7. LOGIN & TAMPILAN TAB
+# 7. LOGIN & TAMPILAN
 no_hp = st.text_input("Nomor HP (Contoh: 81234567890)")
 password = st.text_input("Password (Tanggal Lahir: DDMMYYYY)", type="password")
 
@@ -120,20 +108,23 @@ if st.button("Masuk ke Sistem"):
             render_bio("Data Siswa", "🧑‍🎓", {"Nama": data['NAMA LENGKAP'], "Reg": data['NO REGISTRASI'], "HP": data['NO HP SISWA']})
             render_bio("Data Orang Tua", "👨‍👩‍👧", {"Nama": data['NAMA ORTU'], "HP 1": data['NO HP ORTU 1'], "HP 2": data['NO HP ORTU 2']})
             render_bio("Informasi Kelas", "📚", {"Kelas": data['KELAS GO'], "Hari": data['HARI'], "Jam": data['JAM KBM'], "Ruang": data['Ruang Kelas'], "Lokasi": data['Lokasi']})
+            with st.expander("ℹ️ FAQ: Cara Membaca Hasil Akademik"):
+                st.write("1. **Uji 1, 2, 3**: Skor dari setiap sesi ujian.\n2. **Grafik Tren**: Perkembangan performa.\n3. **Kendala**: Hubungi Personal Trainer.")
         with tab2:
             fig = go.Figure()
             for g, c1, c2, c3 in grup_uji:
                 fig.add_trace(go.Scatter(x=['Uji 1', 'Uji 2', 'Uji 3'], y=[pd.to_numeric(data.get(c,0), errors='coerce') for c in [c1,c2,c3]], name=g))
             st.plotly_chart(fig, use_container_width=True)
             for g, c1, c2, c3 in grup_uji:
-                st.markdown(f"""<div class='val-card'><div style='font-weight:bold; margin-bottom:5px;'>{g}</div>
+                st.markdown(f"""<div class='val-card'><div style='font-weight:bold;'>{g}</div>
                 <div style='display:flex; gap:10px;'><div class='inner-box'><div class='val-title'>Uji 1</div><div class='val-score'>{data.get(c1,'-')}</div></div>
                 <div class='inner-box'><div class='val-title'>Uji 2</div><div class='val-score'>{data.get(c2,'-')}</div></div>
                 <div class='inner-box'><div class='val-title'>Uji 3</div><div class='val-score'>{data.get(c3,'-')}</div></div></div></div>""", unsafe_allow_html=True)
         with tab3:
-            st.markdown("<div class='trainer-box'><h3>ka Tian</h3><p class='quote-text'>\"Pendidikan adalah senjata paling mematikan di dunia.\"</p></div>", unsafe_allow_html=True)
+            st.markdown("<div class='trainer-box'><h3>👨‍🏫 Profil Personal Trainer</h3><img src='https://cdn-icons-png.flaticon.com/512/1995/1995531.png' width='80'><p><strong>ka Tian</strong></p><p class='quote-text'>\"Pendidikan adalah senjata paling mematikan di dunia, karena dengan pendidikan, Anda dapat mengubah dunia.\"</p><p>Siap mendampingi dan memberikan arahan strategis!</p></div>", unsafe_allow_html=True)
             st.link_button("Klik untuk Chat via WhatsApp", "https://wa.me/6287771740512")
         with tab4:
             st.download_button("📥 Unduh Hasil Akademik (PDF)", data=create_pdf(data, grup_uji), file_name=f"Laporan_{data['NAMA LENGKAP']}.pdf", mime="application/pdf")
     else:
         st.error("Data tidak ditemukan atau Password salah.")
+        st.link_button("Hubungi *Personal Trainer* (ka Tian) untuk Bantuan", "https://wa.me/6287771740512")
