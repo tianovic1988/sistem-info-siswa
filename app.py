@@ -2,148 +2,72 @@ import streamlit as st
 import pandas as pd
 import time 
 
-# 1. Konfigurasi Halaman 
-st.set_page_config(
-    page_title="Portal Akademik", 
-    page_icon="🏫", 
-    layout="centered",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
 
-# 2. Injeksi CSS Khusus (Desain UI)
+# CSS Tambahan untuk kartu nilai
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-    
-    html, body, [class*="css"] {
-        font-family: 'Poppins', sans-serif;
-    }
-    
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    .stAppDeployButton {display:none;}
-    
-    .hero-banner {
-        background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%);
-        padding: 2.5rem 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-        color: white;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-bottom: 2rem;
-    }
-    .hero-banner h1 {
-        color: white !important;
-        font-size: 1.8rem !important; /* Dikecilkan sedikit untuk HP */
-        font-weight: 600 !important;
-        margin-bottom: 0.5rem;
-        padding: 0;
-    }
-    .hero-banner p {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        margin: 0;
-    }
-    
-    .custom-footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: transparent;
-        color: #888888;
-        text-align: center;
-        font-size: 12px;
-        padding: 10px;
-    }
+    .val-card { border: 1px solid #ddd; padding: 10px; border-radius: 10px; background: #f9f9f9; text-align: center; }
+    .val-title { font-weight: bold; color: #195CBF; margin-bottom: 5px; }
+    .val-score { font-size: 1.2rem; font-weight: bold; color: #333; }
     </style>
-    
-    <div class="custom-footer">
-        &copy; 2026 Portal Informasi Akademik. All rights reserved.
-    </div>
     """, unsafe_allow_html=True)
 
-# 3. Sidebar (Pusat Layanan)
+# Sidebar & Header (Sama seperti sebelumnya)
 with st.sidebar:
-    st.markdown("<h1 style='text-align: center; font-size: 4rem; margin-bottom: 0;'>🏫</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: #195CBF;'>Pusat Layanan</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 0.9rem;'>Sistem Informasi Terpadu</p>", unsafe_allow_html=True)
-    st.divider()
-    
-    st.info("Bagi orang tua atau siswa yang tidak bisa login atau mengalami ketidaksesuaian data, silakan hubungi tim kami:")
-    st.success("👨‍💻 **Ka Tian**\n\n📱 [Chat WhatsApp (087771740512)](https://wa.me/6287771740512)")
-    
-    st.divider()
-    st.caption("🕒 Jam Operasional: Senin - Jumat (08.00 - 15.00 WIB)")
+    st.info("Pusat Bantuan: Hubungi [Ka Tian](https://wa.me/6287771740512)")
 
-# 4. Memanggil Banner
-st.markdown("""
-    <div class="hero-banner">
-        <h1>Portal Informasi Akademik</h1>
-        <p>Silakan masukkan nomor telepon yang terdaftar di database untuk mengakses data secara aman.</p>
-    </div>
-""", unsafe_allow_html=True)
+st.title("🎓 Portal Informasi Siswa")
+st.divider()
 
-# 5. Membaca Database 
+# Load Data
 @st.cache_data
 def load_data():
     return pd.read_excel("data_pengguna.xlsx", dtype={'No_HP': str})
 
-try:
-    df = load_data()
-    df['No_HP'] = df['No_HP'].str.strip()
-except Exception as e:
-    st.error("Gagal membaca database. Pastikan file 'data_pengguna.xlsx' tersedia.")
-    st.stop()
+df = load_data()
+df['No_HP'] = df['No_HP'].str.strip()
 
-# 6. Form Input & Logika Pencarian
-st.markdown("### 🔐 Verifikasi Identitas")
-no_hp_input = st.text_input("Nomor Handphone (Siswa / Orang Tua):", placeholder="Contoh: 081234567890")
+no_hp_input = st.text_input("Nomor HP:")
 
-if st.button("Masuk ke Sistem", use_container_width=True, type="primary"):
-    if no_hp_input:
+if st.button("Cari Data", type="primary"):
+    hasil = df[df['No_HP'] == no_hp_input.strip()]
+    if not hasil.empty:
+        data = hasil.iloc[0]
         
-        with st.spinner("Mencocokkan data dengan server..."):
-            time.sleep(1.5) 
-            no_hp_input = no_hp_input.strip()
-            hasil_pencarian = df[df['No_HP'] == no_hp_input]
+        # 1. BIODATA
+        st.subheader("👤 Biodata Siswa")
+        with st.container(border=True):
+            col1, col2 = st.columns(2)
+            # Tentukan kolom mana saja yang masuk Biodata
+            biodata_cols = ['NAMA LENGKAP', 'NO REGISTRASI', 'RUANG KELAS'] 
+            for i, col in enumerate(biodata_cols):
+                val = data.get(col, "-")
+                if i % 2 == 0: col1.write(f"**{col}**: {val}")
+                else: col2.write(f"**{col}**: {val}")
+
+        # 2. NILAI AKADEMIK (Dikelompokkan)
+        st.subheader("📊 Nilai Akademik")
+        # Daftar grup mata uji
+        grup_uji = [
+            ("PU", "PU 1", "PU 2"),
+            ("PPU", "PPU 1", "PPU 2"),
+            ("PBM", "PBM 1", "PBM 2"),
+            ("PK", "PK 1", "PK 2"),
+            ("Lit Bhs Indo", "Lit Bhs Indo 1", "Lit Bhs Indo 2"),
+            ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2"),
+            ("PM", "PM 1", "PM 2")
+        ]
         
-        if not hasil_pencarian.empty:
-            st.toast('Akses Diberikan!', icon='🔓')
-            data_user = hasil_pencarian.iloc[0]
-            
-            st.success(f"🎉 Verifikasi Berhasil! Selamat datang, **{data_user.get('Nama', data_user.get('NAMA LENGKAP', 'Siswa'))}**.")
-            
-            st.markdown("### 📄 Rincian Data")
-            
-            with st.container(border=True):
-                kolom_kiri, kolom_kanan = st.columns(2) 
-                urutan = 0
-                
-                for kolom in df.columns:
-                    if kolom != 'No_HP':
-                        nilai_data = data_user[kolom]
-                        if pd.isna(nilai_data):
-                            nilai_data = "-"
-                        
-                        # [PERUBAHAN UTAMA]
-                        # Menggunakan custom HTML agar font normal dan bisa membungkus kata (word-wrap) di HP
-                        desain_kartu = f"""
-                        <div style="margin-bottom: 16px;">
-                            <small style="opacity: 0.7; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">{kolom}</small>
-                            <div style="font-size: 16px; font-weight: 500; word-wrap: break-word; line-height: 1.4;">{nilai_data}</div>
-                        </div>
-                        """
-                        
-                        if urutan % 2 == 0:
-                            kolom_kiri.markdown(desain_kartu, unsafe_allow_html=True)
-                        else:
-                            kolom_kanan.markdown(desain_kartu, unsafe_allow_html=True)
-                        
-                        urutan += 1
-                        
-            st.caption("Jika terdapat kesalahan pada data di atas, harap segera melaporkannya ke Pusat Layanan di menu samping.")
-        else:
-            st.error("❌ Akses Ditolak: Nomor HP tidak terdaftar di sistem.")
+        for nama_grup, col1_name, col2_name in grup_uji:
+            st.markdown(f"**{nama_grup}**")
+            c1, c2 = st.columns(2)
+            # Kartu kiri
+            with c1:
+                st.markdown(f"<div class='val-card'><div class='val-title'>{col1_name}</div><div class='val-score'>{data.get(col1_name, '-')}</div></div>", unsafe_allow_html=True)
+            # Kartu kanan
+            with c2:
+                st.markdown(f"<div class='val-card'><div class='val-title'>{col2_name}</div><div class='val-score'>{data.get(col2_name, '-')}</div></div>", unsafe_allow_html=True)
+            st.write("") # spasi
     else:
-        st.warning("⚠️ Kolom verifikasi kosong. Silakan isi nomor handphone Anda.")
+        st.error("Data tidak ditemukan.")
