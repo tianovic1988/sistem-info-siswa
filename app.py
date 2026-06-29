@@ -20,29 +20,34 @@ st.markdown("""
 # 3. HEADER
 st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sistem Informasi Siswa Terpadu</p></div>""", unsafe_allow_html=True)
 
-# 4. DATA
+# 4. LOAD DATA
 @st.cache_data
 def load_data():
-    return pd.read_excel("data_pengguna.xlsx", dtype={'_HP': str}) # Mengikuti kolom _HP
+    # Membaca excel, memastikan kolom _HP dibaca sebagai teks agar tidak hilang nol depannya
+    return pd.read_excel("data_pengguna.xlsx", dtype={'_HP': str})
 
 try:
     df = load_data()
-    # Membersihkan kolom login (_HP)
-    df['_HP'] = df['_HP'].astype(str).str.strip()
+    # Membersihkan kolom _HP dari spasi yang mungkin ada
+    df['_HP'] = df['_HP'].str.strip()
 except Exception as e:
-    st.error(f"Error memuat file: {e}")
+    st.error(f"File data tidak ditemukan atau bermasalah: {e}")
     st.stop()
 
-# 5. INPUT & LOGIKA
-no_hp = st.text_input("Masukkan Nomor Handphone Terdaftar:")
+# 5. INPUT LOGIN
+no_hp = st.text_input("Masukkan Nomor Handphone:")
 
 if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
+    # Mencocokkan input dengan kolom _HP di Excel
     hasil = df[df['_HP'] == no_hp.strip()]
+    
     if not hasil.empty:
         data = hasil.iloc[0]
         
-        # BIODATA (Menggunakan nama kolom sesuai gambar)
+        # --- BIODATA (3 Kartu Terkelompok) ---
         st.subheader("👤 Biodata Siswa")
+        
+        # Kartu Data Siswa
         with st.container(border=True):
             st.markdown("#### 🧑‍🎓 Data Siswa")
             c1, c2 = st.columns(2)
@@ -50,6 +55,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             c2.write(f"**No Reg**: {data.get('NO REGISTRASI', '-')}")
             st.write(f"**No HP Siswa**: {data.get('NO HP SISWA', '-')}")
             
+        # Kartu Data Ortu
         with st.container(border=True):
             st.markdown("#### 👨‍👩‍👧 Data Orang Tua")
             st.write(f"**Nama Ortu**: {data.get('NAMA ORTU', '-')}")
@@ -57,18 +63,18 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             c1.write(f"**No HP 1**: {data.get('NO HP ORTU 1', '-')}")
             c2.write(f"**No HP 2**: {data.get('NO HP ORTU 2', '-')}")
             
+        # Kartu Data Kelas GO
         with st.container(border=True):
             st.markdown("#### 📚 Data Kelas GO")
             st.write(f"**Kelas**: {data.get('KELAS GO', '-')}")
             st.write(f"**Hari**: {data.get('HARI', '-')}")
             st.write(f"**Jam**: {data.get('JAM KBM', '-')}")
             c1, c2 = st.columns(2)
-            c1.write(f"**Ruang**: {data.get('Ruang Kelas', '-')}") # Sesuai Excel
-            c2.write(f"**Lokasi**: {data.get('Lokasi', '-')}")      # Sesuai Excel
+            c1.write(f"**Ruang**: {data.get('Ruang Kelas', '-')}")
+            c2.write(f"**Lokasi**: {data.get('Lokasi', '-')}")
 
-        # NILAI
+        # --- NILAI TERKELOMPOK ---
         st.subheader("📊 Nilai Akademik")
-        # Pastikan nama di grup_uji sama persis dengan header Excel
         grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
                     ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
                     ("Lit Bhs Ing","Lit Bhs Ing 1","Lit Bhs Ing 2"), ("PM","PM 1","PM 2")]
@@ -87,6 +93,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
                     </div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """, unsafe_html=True)
+            
     else:
-        st.error("Nomor handphone tidak terdaftar. Silakan hubungi admin (ka Tian) di WA : 087771740512")
+        st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
