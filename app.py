@@ -1,18 +1,25 @@
 import streamlit as st
 import pandas as pd
-import time  # Untuk efek animasi loading
+import time 
 
-# 1. Konfigurasi Halaman 
-st.set_page_config(page_title="Portal Siswa Profesional", page_icon="🎓", layout="centered")
+# 1. Konfigurasi Halaman (Ditambah aturan agar menu kiri selalu terbuka)
+st.set_page_config(
+    page_title="Portal Siswa Profesional", 
+    page_icon="🎓", 
+    layout="centered",
+    initial_sidebar_state="expanded" # [BARU] Memaksa menu kiri selalu terbuka
+)
 
-# 2. Modifikasi CSS (Menyembunyikan menu & menambahkan Footer Hak Cipta)
+# 2. Modifikasi CSS (Perbaikan)
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Kode penyembunyi 'header' DIHAPUS agar tombol panah menu tetap ada di HP */
     
-    /* Membuat tulisan footer sendiri di bawah */
+    /* Tombol Deploy bawaan Streamlit kita sembunyikan secara spesifik */
+    .stAppDeployButton {display:none;}
+    
     .custom-footer {
         position: fixed;
         left: 0;
@@ -34,20 +41,17 @@ st.markdown("""
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/3135/3135823.png", width=100)
     st.title("Pusat Bantuan")
-    
-    # [PERUBAHAN KALIMAT DI SINI]
     st.info("Jika nomor tidak terdaftar silakan hubungi : ka Tian ( WA : [wa.me/6287771740512](https://wa.me/6287771740512) )")
-    
     st.divider()
     st.caption("Jam Layanan: 08.00 - 15.00 WIB")
 
-# 4. Header Utama dengan Banner
-st.image("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1000&auto=format&fit=crop", use_container_width=True)
+# 4. Header Utama 
+# (Gambar banner atas yang rusak sudah dihapus)
 st.title("🎓 Portal Informasi Siswa")
 st.markdown("Silakan masukkan nomor HP terdaftar untuk mengakses data Anda.")
 st.divider()
 
-# 5. Membaca Database (Menggunakan Cache agar web tidak lemot)
+# 5. Membaca Database 
 @st.cache_data
 def load_data():
     return pd.read_excel("data_pengguna.xlsx", dtype={'No_HP': str})
@@ -60,26 +64,23 @@ except Exception as e:
     st.stop()
 
 # 6. Form Input
-no_hp_input = st.text_input("📱 Nomor HP Anda:", placeholder="Contoh: 81234567890")
+no_hp_input = st.text_input("📱 Nomor HP Anda:", placeholder="Contoh: 081234567890")
 
-# Tombol menggunakan type="primary" agar warnanya menyala
+# Tombol utama
 if st.button("Cek Data", use_container_width=True, type="primary"):
     if no_hp_input:
         
-        # Efek Animasi Loading
         with st.spinner("Memverifikasi data di server..."):
-            time.sleep(1.5)  # Jeda buatan selama 1.5 detik
+            time.sleep(1.5) 
             no_hp_input = no_hp_input.strip()
             hasil_pencarian = df[df['No_HP'] == no_hp_input]
         
         if not hasil_pencarian.empty:
-            # Notifikasi Pop-up di pojok kanan bawah
             st.toast('Verifikasi Berhasil!', icon='✅')
             
             data_user = hasil_pencarian.iloc[0]
             st.success(f"Selamat datang, **{data_user.get('Nama', 'Siswa')}**!")
             
-            # Membungkus data di dalam kotak Expander
             with st.expander("📄 Klik untuk melihat rincian data Anda", expanded=True):
                 kolom_kiri, kolom_kanan = st.columns(2) 
                 urutan = 0
@@ -90,13 +91,12 @@ if st.button("Cek Data", use_container_width=True, type="primary"):
                         if pd.isna(nilai_data):
                             nilai_data = "-"
                         
-                        # Format tampilan agar lebih padat dan rapi
                         if urutan % 2 == 0:
                             kolom_kiri.markdown(f"**{kolom}**<br>{nilai_data}", unsafe_allow_html=True)
-                            kolom_kiri.write("") # spasi
+                            kolom_kiri.write("") 
                         else:
                             kolom_kanan.markdown(f"**{kolom}**<br>{nilai_data}", unsafe_allow_html=True)
-                            kolom_kanan.write("") # spasi
+                            kolom_kanan.write("") 
                         urutan += 1
         else:
             st.error("❌ Nomor HP tidak ditemukan di sistem kami.")
