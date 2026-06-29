@@ -15,7 +15,7 @@ st.markdown("""
     .bio-card h4, .bio-card strong { color: #ffffff !important; }
     .bio-card div { color: #f0f0f0 !important; }
     
-    /* CSS baru untuk menyejajarkan titik dua */
+    /* CSS untuk menyejajarkan titik dua */
     .bio-row { display: flex; margin-bottom: 8px; }
     .bio-label { width: 120px; font-weight: bold; flex-shrink: 0; }
     .bio-colon { width: 20px; }
@@ -99,4 +99,4 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             """, unsafe_allow_html=True)
             
     else:
-        st.error("Nomor handphone tidak terdaftar di sistem.")
+        st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
