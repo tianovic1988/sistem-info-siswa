@@ -1,30 +1,38 @@
 import streamlit as st
 import pandas as pd
 
-# Konfigurasi Halaman (Harus di baris paling atas)
+# 1. Konfigurasi Halaman
 st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
 
-# --- SIDEBAR (Diletakkan di posisi paling atas setelah konfigurasi) ---
-with st.sidebar:
-    st.markdown("### 🏫 Pusat Layanan")
-    st.info("Jika data tidak sesuai, hubungi tim kami:")
-    st.success("👨‍💻 **Ka Tian**\n📱 [Chat WhatsApp](https://wa.me/6287771740512)")
-    st.divider()
-    st.caption("🕒 Jam Operasional: Senin - Jumat (08.00 - 15.00 WIB)")
-
-# --- CSS ---
+# 2. Desain CSS (Modern, Profesional, & Responsif)
 st.markdown("""
     <style>
-    .hero-banner { background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%); padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem; }
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    html, body, [class*="css"] { font-family: 'Poppins', sans-serif; }
+    #MainMenu, footer, header, .stAppDeployButton { visibility: hidden; }
+    
+    .hero-banner {
+        background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%);
+        padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem;
+    }
     .val-card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; background: #ffffff; margin-bottom: 15px; border-left: 6px solid #195CBF; }
     .val-title { font-size: 0.75rem; color: #5a6e84; font-weight: 600; }
     .val-score { font-size: 1.25rem; font-weight: 700; color: #195CBF; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP ---
+# 3. Sidebar (Pusat Layanan)
+with st.sidebar:
+    st.markdown("### 🏫 Pusat Layanan")
+    st.info("Jika data tidak sesuai, silakan hubungi tim kami:")
+    st.success("👨‍💻 **Ka Tian**\n📱 [Chat WhatsApp](https://wa.me/6287771740512)")
+    st.divider()
+    st.caption("🕒 Jam Operasional: Senin - Jumat (08.00 - 15.00 WIB)")
+
+# 4. Header
 st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sistem Informasi Siswa Terpadu</p></div>""", unsafe_allow_html=True)
 
+# 5. Load Data
 @st.cache_data
 def load_data():
     return pd.read_excel("data_pengguna.xlsx", dtype={'No_HP': str})
@@ -33,18 +41,19 @@ try:
     df = load_data()
     df['No_HP'] = df['No_HP'].str.strip()
 except:
-    st.error("File data tidak ditemukan.")
+    st.error("File 'data_pengguna.xlsx' tidak ditemukan. Pastikan file sudah diunggah.")
     st.stop()
 
-no_hp = st.text_input("Masukkan Nomor Handphone:")
-if st.button("Masuk ke Sistem", type="primary"):
+# 6. Login & Tampilan Data
+no_hp = st.text_input("Masukkan Nomor Handphone Terdaftar:")
+if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
     hasil = df[df['No_HP'] == no_hp.strip()]
     if not hasil.empty:
         data = hasil.iloc[0]
-       # BIODATA (Terkelompok)
+        
+        # --- BIODATA TERKELOMPOK ---
         st.subheader("👤 Biodata Siswa")
         
-        # 1. Kartu Biodata Siswa
         with st.container(border=True):
             st.markdown("#### 🧑‍🎓 Data Siswa")
             c1, c2 = st.columns(2)
@@ -52,7 +61,6 @@ if st.button("Masuk ke Sistem", type="primary"):
             c2.write(f"**No Reg**: {data.get('NO REGISTRASI', '-')}")
             st.write(f"**No HP Siswa**: {data.get('NO HP SISWA', '-')}")
             
-        # 2. Kartu Data Orang Tua
         with st.container(border=True):
             st.markdown("#### 👨‍👩‍👧 Data Orang Tua")
             st.write(f"**Nama Ortu**: {data.get('NAMA ORTU', '-')}")
@@ -60,7 +68,6 @@ if st.button("Masuk ke Sistem", type="primary"):
             c1.write(f"**No HP 1**: {data.get('NO HP ORTU 1', '-')}")
             c2.write(f"**No HP 2**: {data.get('NO HP ORTU 2', '-')}")
             
-        # 3. Kartu Data Kelas GO
         with st.container(border=True):
             st.markdown("#### 📚 Data Kelas GO")
             st.write(f"**Kelas**: {data.get('KELAS GO', '-')}")
@@ -69,7 +76,8 @@ if st.button("Masuk ke Sistem", type="primary"):
             c1.write(f"**Jam**: {data.get('JAM KBM', '-')}")
             c2.write(f"**Ruang**: {data.get('RUANG KELAS', '-')}")
             st.write(f"**Lokasi**: {data.get('LOKASI', '-')}")
-        
+
+        # --- NILAI TERKELOMPOK ---
         st.subheader("📊 Nilai Akademik")
         grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
                     ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
@@ -79,16 +87,16 @@ if st.button("Masuk ke Sistem", type="primary"):
             val1, val2 = data.get(c1_n, '-'), data.get(c2_n, '-')
             st.markdown(f"""
             <div class='val-card'>
-                <div style='font-weight: 600; color: #0A2540; border-bottom: 1px solid #f0f0f0; margin-bottom: 5px;'>{g}</div>
-                <div style='display: flex; gap: 10px;'>
-                    <div style='flex: 1; padding: 5px; background: #f8fbff; text-align: center;'>
+                <div style='font-weight: 600; color: #0A2540; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px;'>{g}</div>
+                <div style='display: flex; gap: 12px;'>
+                    <div style='flex: 1; border: 1px solid #eef2f7; border-radius: 8px; padding: 10px; background: #f8fbff; text-align: center;'>
                         <div class='val-title'>{c1_n}</div><div class='val-score'>{val1}</div>
                     </div>
-                    <div style='flex: 1; padding: 5px; background: #f8fbff; text-align: center;'>
+                    <div style='flex: 1; border: 1px solid #eef2f7; border-radius: 8px; padding: 10px; background: #f8fbff; text-align: center;'>
                         <div class='val-title'>{c2_n}</div><div class='val-score'>{val2}</div>
                     </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
     else:
-        st.error("Nomor tidak terdaftar.")
+        st.error("Nomor handphone tidak terdaftar di sistem.")
