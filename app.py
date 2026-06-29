@@ -74,9 +74,11 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
         render_biodata_card("Data Orang Tua", "👨‍👩‍👧", {"Nama Ortu": data.get('NAMA ORTU', '-'), "No HP 1": data.get('NO HP ORTU 1', '-'), "No HP 2": data.get('NO HP ORTU 2', '-')})
         render_biodata_card("Data Kelas GO", "📚", {"Kelas": data.get('KELAS GO', '-'), "Hari": data.get('HARI', '-'), "Jam": data.get('JAM KBM', '-'), "Ruang": data.get('Ruang Kelas', '-'), "Lokasi": data.get('Lokasi', '-')})
 
-        # --- NILAI HARUS BERADA DI DALAM BLOK IF ---
+        # --- MULAI DARI SINI (Ganti kode nilai yang lama dengan ini) ---
+        
         st.subheader("📊 Nilai Akademik")
 
+        # Daftar kolom: (Nama Grup, Kolom 1, Kolom 2, Kolom 3)
         grup_uji = [
             ("PU", "PU 1", "PU 2", "PU 3"), 
             ("PPU", "PPU 1", "PPU 2", "PPU 3"), 
@@ -88,7 +90,16 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
         ]
 
         for g, c1_n, c2_n, c3_n in grup_uji:
-            val1, val2, val3 = data.get(c1_n, '-'), data.get(c2_n, '-'), data.get(c3_n, '-')
+            # Mengambil nilai dari dataframe, jika tidak ada isi dengan '-'
+            # Kita konversi ke string agar lebih stabil
+            val1 = str(data.get(c1_n, '-'))
+            val2 = str(data.get(c2_n, '-'))
+            val3 = str(data.get(c3_n, '-'))
+            
+            # Membersihkan 'nan' jika Excel kosong
+            val1 = '-' if val1 == 'nan' else val1
+            val2 = '-' if val2 == 'nan' else val2
+            val3 = '-' if val3 == 'nan' else val3
             
             st.markdown(f"""
             <div class='val-card'>
@@ -100,6 +111,8 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
                 </div>
             </div>
             """, unsafe_allow_html=True)
+            
+        # --- AKHIR DARI KODE NILAI ---
             
     else: # --- ELSE INI HARUS SEJAJAR DENGAN IF NOT HASIL.EMPTY ---
         st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
