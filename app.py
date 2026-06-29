@@ -15,7 +15,6 @@ st.markdown("""
     .bio-card h4, .bio-card strong { color: #ffffff !important; }
     .bio-card div { color: #f0f0f0 !important; }
     
-    /* CSS untuk menyejajarkan titik dua */
     .bio-row { display: flex; margin-bottom: 8px; }
     .bio-label { width: 120px; font-weight: bold; flex-shrink: 0; }
     .bio-colon { width: 20px; }
@@ -30,24 +29,23 @@ st.markdown("""
 # 3. HEADER
 st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sistem Informasi Siswa Terpadu</p></div>""", unsafe_allow_html=True)
 
-# 4. LOAD DATA (UPDATE FUNGSI INI)
+# 4. LOAD DATA (DIPERBAIKI: Memaksa semua data menjadi string agar format tetap terjaga)
 @st.cache_data
 def load_data():
-    # Gunakan dtype=str agar semua data dibaca sebagai teks, bukan angka
+    # dtype=str memastikan '04041994' tidak terbaca jadi angka '4041994'
     df = pd.read_excel("data_pengguna.xlsx", dtype=str)
-    
-    # Bersihkan nama kolom dari spasi tambahan
     df.columns = df.columns.str.strip()
-    
-    # Pastikan No_HP dan PASSWORD ada
     df.rename(columns={df.columns[0]: 'No_HP'}, inplace=True)
     
-    # Bersihkan data agar tidak ada spasi di awal/akhir
-    df['No_HP'] = df['No_HP'].str.strip()
-    if 'PASSWORD' in df.columns:
-        df['PASSWORD'] = df['PASSWORD'].str.strip()
-        
+    # Bersihkan semua data dari spasi yang tidak sengaja terbawa
+    df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
     return df
+
+try:
+    df = load_data()
+except Exception as e:
+    st.error(f"Error memuat file: {e}")
+    st.stop()
 
 # 5. INPUT LOGIN
 no_hp = st.text_input("Masukkan Nomor Handphone (tanpa 0, contoh: 81234567890):")
@@ -58,11 +56,11 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
     
     if not hasil.empty:
         data = hasil.iloc[0]
-        db_password = str(data.get('PASSWORD', ''))
+        db_password = str(data.get('PASSWORD', '')).strip()
         
         # Validasi Password
         if password.strip() == db_password:
-            # --- TAMPILAN BIODATA & NILAI ---
+            # --- TAMPILAN DATA JIKA LOGIN BERHASIL ---
             def render_biodata_card(title, icon, content_dict):
                 rows_html = ""
                 for key, val in content_dict.items():
@@ -81,13 +79,10 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
 
             st.subheader("📊 Nilai Akademik")
             grup_uji = [
-                ("PU", "PU 1", "PU 2", "PU 3"), 
-                ("PPU", "PPU 1", "PPU 2", "PPU 3"), 
-                ("PBM", "PBM 1", "PBM 2", "PBM 3"), 
-                ("PK", "PK 1", "PK 2", "PK 3"), 
+                ("PU", "PU 1", "PU 2", "PU 3"), ("PPU", "PPU 1", "PPU 2", "PPU 3"), 
+                ("PBM", "PBM 1", "PBM 2", "PBM 3"), ("PK", "PK 1", "PK 2", "PK 3"), 
                 ("Lit Bhs Indo", "Lit Bhs Indo 1", "Lit Bhs Indo 2", "Lit Bhs Indo 3"), 
-                ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), 
-                ("PM", "PM 1", "PM 2", "PM 3")
+                ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), ("PM", "PM 1", "PM 2", "PM 3")
             ]
 
             for g, c1, c2, c3 in grup_uji:
