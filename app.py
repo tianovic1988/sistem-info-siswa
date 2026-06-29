@@ -20,14 +20,17 @@ st.markdown("""
 # 3. HEADER
 st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sistem Informasi Siswa Terpadu</p></div>""", unsafe_allow_html=True)
 
-# 4. LOAD DATA
+# 4. LOAD DATA (Disesuaikan dengan No_HP)
 @st.cache_data
 def load_data():
-    return pd.read_excel("data_pengguna.xlsx", dtype={'_HP': str})
+    df = pd.read_excel("data_pengguna.xlsx")
+    # Memastikan kolom pertama dianggap sebagai No_HP
+    df.rename(columns={df.columns[0]: 'No_HP'}, inplace=True)
+    df['No_HP'] = df['No_HP'].astype(str).str.strip()
+    return df
 
 try:
     df = load_data()
-    df['_HP'] = df['_HP'].str.strip()
 except Exception as e:
     st.error(f"Error memuat file: {e}")
     st.stop()
@@ -36,7 +39,8 @@ except Exception as e:
 no_hp = st.text_input("Masukkan Nomor Handphone:")
 
 if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
-    hasil = df[df['_HP'] == no_hp.strip()]
+    # Pencarian berdasarkan No_HP
+    hasil = df[df['No_HP'] == no_hp.strip()]
     
     if not hasil.empty:
         data = hasil.iloc[0]
@@ -73,8 +77,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
                     ("Lit Bhs Ing","Lit Bhs Ing 1","Lit Bhs Ing 2"), ("PM","PM 1","PM 2")]
         
         for g, c1_n, c2_n in grup_uji:
-            val1 = data.get(c1_n, '-')
-            val2 = data.get(c2_n, '-')
+            val1, val2 = data.get(c1_n, '-'), data.get(c2_n, '-')
             st.markdown(f"""
             <div class='val-card'>
                 <div style='font-weight: 600; color: #0A2540; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px;'>{g}</div>
@@ -87,7 +90,7 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
                     </div>
                 </div>
             </div>
-            """, unsafe_html=True)
+            """, unsafe_allow_html=True)
             
     else:
         st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
