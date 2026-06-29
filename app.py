@@ -4,32 +4,19 @@ import pandas as pd
 # 1. KONFIGURASI
 st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
 
-# 2. CSS PROFESIONAL (Dark Mode & Biru Muda)
+# 2. CSS PROFESIONAL
 st.markdown("""
     <style>
     .stApp { background-color: #0E1117; color: #FAFAFA; }
     #MainMenu, footer, header { visibility: hidden; }
-    
     .hero-banner { background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%); padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem; }
-    
-    /* Kartu Biodata Biru Muda */
-    .bio-card { 
-        background: #3498db; 
-        color: #ffffff; 
-        padding: 20px; 
-        border-radius: 12px; 
-        border-left: 8px solid #2980b9; 
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
+    .bio-card { background: #3498db; color: #ffffff; padding: 20px; border-radius: 12px; border-left: 8px solid #2980b9; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
     .bio-card h4, .bio-card strong { color: #ffffff !important; }
     .bio-card div { color: #f0f0f0 !important; }
-    
-    /* Kartu Nilai Dark Mode */
     .val-card { background: #1C1E26; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 6px solid #195CBF; }
     .inner-box { flex: 1; border: 1px solid #333; border-radius: 8px; padding: 10px; background: #262730; text-align: center; }
-    .val-title { font-size: 0.8rem; color: #A0A0A0; font-weight: 600; }
-    .val-score { font-size: 1.4rem; font-weight: 700; color: #FFFFFF; }
+    .val-title { font-size: 0.7rem; color: #A0A0A0; font-weight: 600; }
+    .val-score { font-size: 1.2rem; font-weight: 700; color: #FFFFFF; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -40,6 +27,8 @@ st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sis
 @st.cache_data
 def load_data():
     df = pd.read_excel("data_pengguna.xlsx")
+    # Bersihkan nama kolom dari spasi tambahan agar tidak error saat dicari
+    df.columns = df.columns.str.strip()
     df.rename(columns={df.columns[0]: 'No_HP'}, inplace=True)
     df['No_HP'] = df['No_HP'].astype(str).str.strip()
     return df
@@ -59,26 +48,18 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
     if not hasil.empty:
         data = hasil.iloc[0]
         
-        # Fungsi render kartu biodata
         def render_biodata_card(title, icon, content_dict):
             cols_html = ""
             for key, val in content_dict.items():
                 cols_html += f"<div style='margin-bottom: 8px;'><strong>{key}:</strong> {val}</div>"
             st.markdown(f"<div class='bio-card'><h4>{icon} {title}</h4><div>{cols_html}</div></div>", unsafe_allow_html=True)
 
-        # ... (kode sebelumnya sampai bagian BIODATA)
-
-        # BIODATA
         st.subheader("👤 Biodata Siswa")
         render_biodata_card("Data Siswa", "🧑‍🎓", {"Nama": data.get('NAMA LENGKAP', '-'), "No Reg": data.get('NO REGISTRASI', '-'), "No HP Siswa": data.get('NO HP SISWA', '-')})
         render_biodata_card("Data Orang Tua", "👨‍👩‍👧", {"Nama Ortu": data.get('NAMA ORTU', '-'), "No HP 1": data.get('NO HP ORTU 1', '-'), "No HP 2": data.get('NO HP ORTU 2', '-')})
         render_biodata_card("Data Kelas GO", "📚", {"Kelas": data.get('KELAS GO', '-'), "Hari": data.get('HARI', '-'), "Jam": data.get('JAM KBM', '-'), "Ruang": data.get('Ruang Kelas', '-'), "Lokasi": data.get('Lokasi', '-')})
 
-        # --- MULAI DARI SINI (Ganti kode nilai yang lama dengan ini) ---
-        
         st.subheader("📊 Nilai Akademik")
-
-        # Daftar kolom: (Nama Grup, Kolom 1, Kolom 2, Kolom 3)
         grup_uji = [
             ("PU", "PU 1", "PU 2", "PU 3"), 
             ("PPU", "PPU 1", "PPU 2", "PPU 3"), 
@@ -89,30 +70,22 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             ("PM", "PM 1", "PM 2", "PM 3")
         ]
 
-        for g, c1_n, c2_n, c3_n in grup_uji:
-            # Mengambil nilai dari dataframe, jika tidak ada isi dengan '-'
-            # Kita konversi ke string agar lebih stabil
-            val1 = str(data.get(c1_n, '-'))
-            val2 = str(data.get(c2_n, '-'))
-            val3 = str(data.get(c3_n, '-'))
-            
-            # Membersihkan 'nan' jika Excel kosong
-            val1 = '-' if val1 == 'nan' else val1
-            val2 = '-' if val2 == 'nan' else val2
-            val3 = '-' if val3 == 'nan' else val3
+        for g, c1, c2, c3 in grup_uji:
+            # Menggunakan .get untuk mencari kolom, memastikan output string dan menangani NaN
+            v1 = data[c1] if c1 in data and pd.notnull(data[c1]) else '-'
+            v2 = data[c2] if c2 in data and pd.notnull(data[c2]) else '-'
+            v3 = data[c3] if c3 in data and pd.notnull(data[c3]) else '-'
             
             st.markdown(f"""
             <div class='val-card'>
                 <div style='color:#195CBF; font-weight:bold; border-bottom:1px solid #333; margin-bottom:10px; padding-bottom:5px;'>{g}</div>
                 <div style='display:flex; gap:12px;'>
-                    <div class='inner-box'><div class='val-title'>{c1_n}</div><div class='val-score'>{val1}</div></div>
-                    <div class='inner-box'><div class='val-title'>{c2_n}</div><div class='val-score'>{val2}</div></div>
-                    <div class='inner-box'><div class='val-title'>{c3_n}</div><div class='val-score'>{val3}</div></div>
+                    <div class='inner-box'><div class='val-title'>{c1}</div><div class='val-score'>{v1}</div></div>
+                    <div class='inner-box'><div class='val-title'>{c2}</div><div class='val-score'>{v2}</div></div>
+                    <div class='inner-box'><div class='val-title'>{c3}</div><div class='val-score'>{v3}</div></div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
-        # --- AKHIR DARI KODE NILAI ---
-            
-    else: # --- ELSE INI HARUS SEJAJAR DENGAN IF NOT HASIL.EMPTY ---
+    else:
         st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
