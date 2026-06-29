@@ -30,23 +30,24 @@ st.markdown("""
 # 3. HEADER
 st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sistem Informasi Siswa Terpadu</p></div>""", unsafe_allow_html=True)
 
-# 4. LOAD DATA
+# 4. LOAD DATA (UPDATE FUNGSI INI)
 @st.cache_data
 def load_data():
-    df = pd.read_excel("data_pengguna.xlsx")
+    # Gunakan dtype=str agar semua data dibaca sebagai teks, bukan angka
+    df = pd.read_excel("data_pengguna.xlsx", dtype=str)
+    
+    # Bersihkan nama kolom dari spasi tambahan
     df.columns = df.columns.str.strip()
+    
+    # Pastikan No_HP dan PASSWORD ada
     df.rename(columns={df.columns[0]: 'No_HP'}, inplace=True)
-    df['No_HP'] = df['No_HP'].astype(str).str.strip()
-    # Pastikan kolom password dibaca sebagai string
+    
+    # Bersihkan data agar tidak ada spasi di awal/akhir
+    df['No_HP'] = df['No_HP'].str.strip()
     if 'PASSWORD' in df.columns:
-        df['PASSWORD'] = df['PASSWORD'].astype(str).str.strip()
+        df['PASSWORD'] = df['PASSWORD'].str.strip()
+        
     return df
-
-try:
-    df = load_data()
-except Exception as e:
-    st.error(f"Error memuat file: {e}")
-    st.stop()
 
 # 5. INPUT LOGIN
 no_hp = st.text_input("Masukkan Nomor Handphone (tanpa 0, contoh: 81234567890):")
