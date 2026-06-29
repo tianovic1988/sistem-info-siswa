@@ -73,22 +73,42 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
         render_biodata_card("Data Kelas GO", "📚", {"Kelas": data.get('KELAS GO', '-'), "Hari": data.get('HARI', '-'), "Jam": data.get('JAM KBM', '-'), "Ruang": data.get('Ruang Kelas', '-'), "Lokasi": data.get('Lokasi', '-')})
 
         # NILAI
-        st.subheader("📊 Nilai Akademik")
-        grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
-                    ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
-                    ("Lit Bhs Ing","Lit Bhs Ing 1","Lit Bhs Ing 2"), ("PM","PM 1","PM 2")]
-        
-        for g, c1_n, c2_n in grup_uji:
-            val1, val2 = data.get(c1_n, '-'), data.get(c2_n, '-')
-            st.markdown(f"""
-            <div class='val-card'>
-                <div style='color:#195CBF; font-weight:bold; border-bottom:1px solid #333; margin-bottom:10px; padding-bottom:5px;'>{g}</div>
-                <div style='display:flex; gap:12px;'>
-                    <div class='inner-box'><div class='val-title'>{c1_n}</div><div class='val-score'>{val1}</div></div>
-                    <div class='inner-box'><div class='val-title'>{c2_n}</div><div class='val-score'>{val2}</div></div>
-                </div>
+st.subheader("📊 Nilai Akademik")
+
+# Daftar kolom: (Nama Grup, Kolom 1, Kolom 2, Kolom 3)
+grup_uji = [
+    ("PU", "PU 1", "PU 2", "PU 3"), 
+    ("PPU", "PPU 1", "PPU 2", "PPU 3"), 
+    ("PBM", "PBM 1", "PBM 2", "PBM 3"), 
+    ("PK", "PK 1", "PK 2", "PK 3"), 
+    ("Lit Bhs Indo", "Lit Bhs Indo 1", "Lit Bhs Indo 2", "Lit Bhs Indo 3"), 
+    ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), 
+    ("PM", "PM 1", "PM 2", "PM 3")
+]
+
+for g, c1_n, c2_n, c3_n in grup_uji:
+    # Mengambil nilai dari dataframe, jika tidak ada isi dengan '-'
+    val1, val2, val3 = data.get(c1_n, '-'), data.get(c2_n, '-'), data.get(c3_n, '-')
+    
+    st.markdown(f"""
+    <div class='val-card'>
+        <div style='color:#195CBF; font-weight:bold; border-bottom:1px solid #333; margin-bottom:10px; padding-bottom:5px;'>{g}</div>
+        <div style='display:flex; gap:12px;'>
+            <div class='inner-box'>
+                <div class='val-title'>{c1_n}</div>
+                <div class='val-score'>{val1}</div>
             </div>
-            """, unsafe_allow_html=True)
+            <div class='inner-box'>
+                <div class='val-title'>{c2_n}</div>
+                <div class='val-score'>{val2}</div>
+            </div>
+            <div class='inner-box'>
+                <div class='val-title'>{c3_n}</div>
+                <div class='val-score'>{val3}</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
             
     else:
         st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
