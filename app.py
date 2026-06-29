@@ -23,24 +23,25 @@ st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sis
 # 4. DATA
 @st.cache_data
 def load_data():
-    return pd.read_excel("data_pengguna.xlsx", dtype={'No_HP': str})
+    return pd.read_excel("data_pengguna.xlsx", dtype={'_HP': str}) # Mengikuti kolom _HP
 
 try:
     df = load_data()
-    df['No_HP'] = df['No_HP'].str.strip()
-except:
-    st.error("File data tidak ditemukan.")
+    # Membersihkan kolom login (_HP)
+    df['_HP'] = df['_HP'].astype(str).str.strip()
+except Exception as e:
+    st.error(f"Error memuat file: {e}")
     st.stop()
 
 # 5. INPUT & LOGIKA
 no_hp = st.text_input("Masukkan Nomor Handphone Terdaftar:")
 
 if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
-    hasil = df[df['No_HP'] == no_hp.strip()]
+    hasil = df[df['_HP'] == no_hp.strip()]
     if not hasil.empty:
         data = hasil.iloc[0]
         
-        # BIODATA
+        # BIODATA (Menggunakan nama kolom sesuai gambar)
         st.subheader("👤 Biodata Siswa")
         with st.container(border=True):
             st.markdown("#### 🧑‍🎓 Data Siswa")
@@ -60,13 +61,14 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             st.markdown("#### 📚 Data Kelas GO")
             st.write(f"**Kelas**: {data.get('KELAS GO', '-')}")
             st.write(f"**Hari**: {data.get('HARI', '-')}")
+            st.write(f"**Jam**: {data.get('JAM KBM', '-')}")
             c1, c2 = st.columns(2)
-            c1.write(f"**Jam**: {data.get('JAM KBM', '-')}")
-            c2.write(f"**Ruang**: {data.get('RUANG KELAS', '-')}")
-            st.write(f"**Lokasi**: {data.get('LOKASI', '-')}")
+            c1.write(f"**Ruang**: {data.get('Ruang Kelas', '-')}") # Sesuai Excel
+            c2.write(f"**Lokasi**: {data.get('Lokasi', '-')}")      # Sesuai Excel
 
         # NILAI
         st.subheader("📊 Nilai Akademik")
+        # Pastikan nama di grup_uji sama persis dengan header Excel
         grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
                     ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
                     ("Lit Bhs Ing","Lit Bhs Ing 1","Lit Bhs Ing 2"), ("PM","PM 1","PM 2")]
@@ -87,5 +89,4 @@ if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
             </div>
             """, unsafe_allow_html=True)
     else:
-        # Peringatan kustom yang Anda minta
-        st.error("Nomor handphone tidak terdaftar di sistem. Silakan hubungi admin (ka Tian) di WA : 087771740512")
+        st.error("Nomor handphone tidak terdaftar. Silakan hubungi admin (ka Tian) di WA : 087771740512")
