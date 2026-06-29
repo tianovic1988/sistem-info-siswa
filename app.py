@@ -68,7 +68,7 @@ if st.button("Masuk", type="primary", use_container_width=True):
                     else: c2.markdown(f"**{col}**: {val}")
                     i += 1
         
-        # NILAI (Dikelompokkan per mata uji ke dalam SATU kartu)
+        # NILAI (Dikelompokkan ke dalam satu kartu dengan kotak terpisah per nilai)
         st.subheader("📊 Nilai Akademik")
         grup_uji = [
             ("PU", "PU 1", "PU 2"), 
@@ -81,20 +81,18 @@ if st.button("Masuk", type="primary", use_container_width=True):
         ]
         
         for g, c1_n, c2_n in grup_uji:
-            # Mengambil nilai
             val1 = data.get(c1_n, '-')
             val2 = data.get(c2_n, '-')
             
-            # Membuat satu kartu besar yang memuat kedua nilai
             st.markdown(f"""
-            <div class='val-card' style='text-align: left; padding: 15px;'>
+            <div class='val-card' style='padding: 15px; margin-bottom: 15px;'>
                 <div style='font-weight: bold; color: #195CBF; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;'>{g}</div>
-                <div style='display: flex; justify-content: space-between;'>
-                    <div style='text-align: center;'>
+                <div style='display: flex; gap: 10px;'>
+                    <div style='flex: 1; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; background: #fff;'>
                         <div class='val-title'>{c1_n}</div>
                         <div class='val-score'>{val1}</div>
                     </div>
-                    <div style='text-align: center;'>
+                    <div style='flex: 1; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; background: #fff;'>
                         <div class='val-title'>{c2_n}</div>
                         <div class='val-score'>{val2}</div>
                     </div>
