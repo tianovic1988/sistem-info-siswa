@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from fpdf import FPDF
+from datetime import datetime # Menambahkan modul datetime untuk waktu real-time
 
 # 1. KONFIGURASI
 st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
@@ -51,7 +52,7 @@ grup_uji = [
     ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2", "Lit Bhs Ing 3"), ("PM", "PM 1", "PM 2", "PM 3")
 ]
 
-# 6. FUNGSI PDF (REVISI TABEL RAPI)
+# 6. FUNGSI PDF (DENGAN FOOTER REAL-TIME)
 def create_pdf(data, grup_uji):
     pdf = FPDF()
     pdf.add_page()
@@ -76,19 +77,23 @@ def create_pdf(data, grup_uji):
     pdf.set_fill_color(200, 220, 255)
     pdf.set_font("Arial", 'B', 11)
     
-    # Header Tabel
     pdf.cell(50, 10, "Mata Uji", 1, 0, 'C', 1)
     pdf.cell(30, 10, "Uji 1", 1, 0, 'C', 1)
     pdf.cell(30, 10, "Uji 2", 1, 0, 'C', 1)
     pdf.cell(30, 10, "Uji 3", 1, 1, 'C', 1)
     
-    # Isi Tabel
     pdf.set_font("Arial", '', 11)
     for g, c1, c2, c3 in grup_uji:
         pdf.cell(50, 10, g, 1)
         pdf.cell(30, 10, str(data.get(c1, '-')), 1, 0, 'C')
         pdf.cell(30, 10, str(data.get(c2, '-')), 1, 0, 'C')
         pdf.cell(30, 10, str(data.get(c3, '-')), 1, 1, 'C')
+    
+    # Footer Real-time
+    pdf.ln(10)
+    pdf.set_font("Arial", 'I', 9)
+    waktu_cetak = datetime.now().strftime("%d %B %Y, %H:%M:%S")
+    pdf.cell(0, 10, f"Dicetak dari BISA SYSTEM - by tian.go pada {waktu_cetak}", ln=True, align='C')
         
     return pdf.output(dest='S').encode('latin-1')
 
