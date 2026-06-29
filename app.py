@@ -41,11 +41,34 @@ if st.button("Masuk ke Sistem", type="primary"):
     hasil = df[df['No_HP'] == no_hp.strip()]
     if not hasil.empty:
         data = hasil.iloc[0]
-        # BIODATA & NILAI (Logika sama seperti sebelumnya)
+       # BIODATA (Terkelompok)
         st.subheader("👤 Biodata Siswa")
+        
+        # 1. Kartu Biodata Siswa
         with st.container(border=True):
-            st.write(f"**Nama**: {data.get('Nama', data.get('NAMA LENGKAP', '-'))}")
-            st.write(f"**No Registrasi**: {data.get('NO REGISTRASI', '-')}")
+            st.markdown("#### 🧑‍🎓 Data Siswa")
+            c1, c2 = st.columns(2)
+            c1.write(f"**Nama**: {data.get('NAMA LENGKAP', '-')}")
+            c2.write(f"**No Reg**: {data.get('NO REGISTRASI', '-')}")
+            st.write(f"**No HP Siswa**: {data.get('NO HP SISWA', '-')}")
+            
+        # 2. Kartu Data Orang Tua
+        with st.container(border=True):
+            st.markdown("#### 👨‍👩‍👧 Data Orang Tua")
+            st.write(f"**Nama Ortu**: {data.get('NAMA ORTU', '-')}")
+            c1, c2 = st.columns(2)
+            c1.write(f"**No HP 1**: {data.get('NO HP ORTU 1', '-')}")
+            c2.write(f"**No HP 2**: {data.get('NO HP ORTU 2', '-')}")
+            
+        # 3. Kartu Data Kelas GO
+        with st.container(border=True):
+            st.markdown("#### 📚 Data Kelas GO")
+            st.write(f"**Kelas**: {data.get('KELAS GO', '-')}")
+            st.write(f"**Hari**: {data.get('HARI', '-')}")
+            c1, c2 = st.columns(2)
+            c1.write(f"**Jam**: {data.get('JAM KBM', '-')}")
+            c2.write(f"**Ruang**: {data.get('RUANG KELAS', '-')}")
+            st.write(f"**Lokasi**: {data.get('LOKASI', '-')}")
         
         st.subheader("📊 Nilai Akademik")
         grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
