@@ -68,16 +68,38 @@ if st.button("Masuk", type="primary", use_container_width=True):
                     else: c2.markdown(f"**{col}**: {val}")
                     i += 1
         
-        # NILAI (Dikelompokkan per mata uji)
+        # NILAI (Dikelompokkan per mata uji ke dalam SATU kartu)
         st.subheader("📊 Nilai Akademik")
-        grup_uji = [("PU","PU 1","PU 2"), ("PPU","PPU 1","PPU 2"), ("PBM","PBM 1","PBM 2"), 
-                    ("PK","PK 1","PK 2"), ("Lit Bhs Indo","Lit Bhs Indo 1","Lit Bhs Indo 2"), 
-                    ("Lit Bhs Ing","Lit Bhs Ing 1","Lit Bhs Ing 2"), ("PM","PM 1","PM 2")]
+        grup_uji = [
+            ("PU", "PU 1", "PU 2"), 
+            ("PPU", "PPU 1", "PPU 2"), 
+            ("PBM", "PBM 1", "PBM 2"), 
+            ("PK", "PK 1", "PK 2"), 
+            ("Lit Bhs Indo", "Lit Bhs Indo 1", "Lit Bhs Indo 2"), 
+            ("Lit Bhs Ing", "Lit Bhs Ing 1", "Lit Bhs Ing 2"), 
+            ("PM", "PM 1", "PM 2")
+        ]
         
         for g, c1_n, c2_n in grup_uji:
-            st.markdown(f"**{g}**")
-            cols = st.columns(2)
-            cols[0].markdown(f"<div class='val-card'><div class='val-title'>{c1_n}</div><div class='val-score'>{data.get(c1_n, '-')}</div></div>", unsafe_allow_html=True)
-            cols[1].markdown(f"<div class='val-card'><div class='val-title'>{c2_n}</div><div class='val-score'>{data.get(c2_n, '-')}</div></div>", unsafe_allow_html=True)
+            # Mengambil nilai
+            val1 = data.get(c1_n, '-')
+            val2 = data.get(c2_n, '-')
+            
+            # Membuat satu kartu besar yang memuat kedua nilai
+            st.markdown(f"""
+            <div class='val-card' style='text-align: left; padding: 15px;'>
+                <div style='font-weight: bold; color: #195CBF; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;'>{g}</div>
+                <div style='display: flex; justify-content: space-between;'>
+                    <div style='text-align: center;'>
+                        <div class='val-title'>{c1_n}</div>
+                        <div class='val-score'>{val1}</div>
+                    </div>
+                    <div style='text-align: center;'>
+                        <div class='val-title'>{c2_n}</div>
+                        <div class='val-score'>{val2}</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
     else:
         st.error("Nomor tidak terdaftar.")
