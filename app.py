@@ -4,16 +4,25 @@ import pandas as pd
 # 1. KONFIGURASI
 st.set_page_config(page_title="Portal Akademik", page_icon="🏫", layout="centered")
 
-# 2. CSS PROFESIONAL
+# 2. CSS PROFESIONAL (Dark Mode Version)
 st.markdown("""
     <style>
+    /* Mengubah latar belakang aplikasi menjadi gelap */
+    .stApp { background-color: #0E1117; }
+    
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-    html, body, [class*="css"] { font-family: 'Poppins', sans-serif; }
+    html, body, [class*="css"] { font-family: 'Poppins', sans-serif; color: #FAFAFA; }
     #MainMenu, footer, header { visibility: hidden; }
+    
     .hero-banner { background: linear-gradient(135deg, #0A2540 0%, #195CBF 100%); padding: 2rem; border-radius: 12px; text-align: center; color: white; margin-bottom: 2rem; }
-    .val-card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; background: #ffffff; margin-bottom: 15px; border-left: 6px solid #195CBF; }
-    .val-title { font-size: 0.75rem; color: #5a6e84; font-weight: 600; }
-    .val-score { font-size: 1.25rem; font-weight: 700; color: #195CBF; }
+    
+    /* Kartu Biodata & Nilai (Dark Mode Style) */
+    .val-card { border: 1px solid #262730; padding: 15px; border-radius: 10px; background: #1C1E26; margin-bottom: 15px; border-left: 6px solid #195CBF; }
+    .val-title { font-size: 0.75rem; color: #A0A0A0; font-weight: 600; }
+    .val-score { font-size: 1.25rem; font-weight: 700; color: #FFFFFF; }
+    
+    /* Agar teks di dalam container putih tetap terlihat */
+    div[data-testid="stVerticalBlock"] { color: #FAFAFA; }
     </style>
     """, unsafe_allow_html=True)
 
