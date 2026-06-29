@@ -24,12 +24,12 @@ st.markdown("""<div class="hero-banner"><h1>Portal Informasi Akademik</h1><p>Sis
 @st.cache_data
 def load_data():
     # Membaca excel, memastikan kolom _HP dibaca sebagai teks agar tidak hilang nol depannya
-    return pd.read_excel("data_pengguna.xlsx", dtype={'_HP': str})
+    return pd.read_excel("data_pengguna.xlsx", dtype={'No_HP': str})
 
 try:
     df = load_data()
     # Membersihkan kolom _HP dari spasi yang mungkin ada
-    df['_HP'] = df['_HP'].str.strip()
+    df['No_HP'] = df['No_HP'].str.strip()
 except Exception as e:
     st.error(f"File data tidak ditemukan atau bermasalah: {e}")
     st.stop()
@@ -39,7 +39,7 @@ no_hp = st.text_input("Masukkan Nomor Handphone:")
 
 if st.button("Masuk ke Sistem", type="primary", use_container_width=True):
     # Mencocokkan input dengan kolom _HP di Excel
-    hasil = df[df['_HP'] == no_hp.strip()]
+    hasil = df[df['No_HP'] == no_hp.strip()]
     
     if not hasil.empty:
         data = hasil.iloc[0]
